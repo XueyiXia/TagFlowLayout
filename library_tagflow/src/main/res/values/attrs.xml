@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--流布局-->
+    <declare-styleable name="TagFlowLayout">
+        <attr name="tagsHorizontalSpace" format="dimension" />
+        <attr name="tagsVerticalSpace" format="dimension" />
+        <attr name="animationDuration" format="integer" />
+        <attr name="hasMore" format="boolean" />
+
+        <!--布局类型，列表或者-->
+        <attr name="layout_type" format="reference">
+            <enum name="RecyclerView" value="0" />
+            <enum name="FlowLayout" value="1" />
+        </attr>
+
+        <!--LayoutManager 模式-->
+        <attr name="layoutManager_Mode" format="reference">
+            <enum name="LinearLayoutManager" value="0"/>
+            <enum name="GridLayoutManager" value="1"/>
+            <enum name="StaggeredGridLayoutManager" value="2"/>
+        </attr>
+    </declare-styleable>
+
+
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_tag_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/fl_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <com.framework.tagflow.view.ControlScrollView
+            android:id="@+id/hsv_tag_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none" />
+
+        <LinearLayout
+            android:id="@+id/rl_show_more"
+            android:orientation="vertical"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/dp_3">
+
+            <LinearLayout
+                android:layout_width="@dimen/dp_33"
+                android:layout_height="@dimen/dp_15"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:focusable="auto"
+                android:gravity="center"
+                android:layout_margin="@dimen/dp_10"
+                android:paddingStart="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingEnd="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5"
+                android:background="@drawable/tag_flow_layout_arrow_bg">
+
+                <TextView
+                    android:id="@+id/tv_more_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/more"
+                    android:textStyle="bold"
+                    android:textColor="#262626"
+                    android:textSize="@dimen/sp_14"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_arrow_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/common_icon_down_arrow" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</merge>

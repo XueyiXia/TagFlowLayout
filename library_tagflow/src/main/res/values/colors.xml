@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- text color -->
+    <color name="color_4D4D4D">#4D4D4D</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_FCFCFC">#FCFCFC</color>
+    <color name="color_808080">#808080</color>
+
+    <!-- image color -->
+    <color name="color_D6D0C7">#D6D0C7</color>
+    <color name="color_E8E4DF">#E8E4DF</color>
+    <color name="color_F5B95F">#F5B95F</color>
+    <color name="color_F8E49E">#F8E49E</color>
+    <color name="color_959595">#959595</color>
+
+    <!-- bg color -->
+    <color name="color_F2FFFFFF">#F2FFFFFF</color>
+    <color name="color_11AB9B">#11AB9B</color>
+    <color name="color_EF6A39">#EF6A39</color>
+    <color name="color_F0E4D3">#F0E4D3</color>
+    <color name="color_F0EDE9">#F0EDE9</color>
+    <color name="color_F0E8DE">#F0E8DE</color>
+    <color name="color_f6Ce7e">#f6Ce7e</color>
+    <color name="color_FFFDFA">#FFFDFA</color>
+    <color name="color_FFFFFF">#FFFFFF</color>
+    <color name="color_FAF9F7">#FAF9F7</color>
+    <color name="color_F5A05F">#f5a05f</color>
+
+    <!-- shadow color-->
+    <color name="color_F5F3F0">#F5F3F0</color>
+    <color name="white">#FFFFFF</color>
+    <color name="color_8C8B89">#8C8B89</color>
+
+    <!--Line-->
+    <color name="color_CCC8C2">#33CCC8C2</color>
+    <color name="color_8A8A8A">#8a8a8a</color>
+
+    <color name="color_EAEAEA">#EAEAEA</color>
+
+    <!--tagflow-->
+    <color name="secondary_text">#8a000000</color>
+    <color name="tag_layout_bg">#def2f2f2</color>
+    <color name="dividers">#1f000000</color>
+
+
+    <!--标题搜索框背景颜色-->
+    <color name="common_toolbar_search_bg_color">#208C8B89</color>
+    <!--标题搜索框说明性文字颜色-->
+    <color name="common_toolbar_search_title_hint_text_color">#7f7f7f</color>
+
+    <color name="color_transparent">#00000000</color>
+
+    <!-- 彈窗 -->
+    <color name="list_line_color">#ccc8c2</color>
+
+    <color name="color_8a8894">#8a8894</color>
+</resources>

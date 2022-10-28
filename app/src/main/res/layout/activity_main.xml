@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F3F0">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/multi_linear_recycler_tag_title"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/sp_16"/>
+
+            <com.framework.tagflow.MultiTagFlowLayout
+                android:id="@+id/multi_linear_recycler_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                app:hasMore="true"
+                app:layout_type="RecyclerView"
+                app:layoutManager_Mode="LinearLayoutManager"
+                app:tagsHorizontalSpace="@dimen/dp_5"
+                app:tagsVerticalSpace="@dimen/dp_5"/>
+
+            <TextView
+                android:id="@+id/multi_grid_recycler_tag_title"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/sp_16"/>
+
+            <com.framework.tagflow.MultiTagFlowLayout
+                android:id="@+id/multi_grid_recycler_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                app:hasMore="true"
+                app:layout_type="RecyclerView"
+                app:layoutManager_Mode="GridLayoutManager"
+                app:tagsHorizontalSpace="@dimen/dp_5"
+                app:tagsVerticalSpace="@dimen/dp_5"/>
+
+
+            <TextView
+                android:id="@+id/multi_flow_tag_title"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/sp_16"/>
+
+            <com.framework.tagflow.MultiTagFlowLayout
+                android:id="@+id/multi_flow_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                app:hasMore="true"
+                app:layout_type="FlowLayout"
+                app:tagsHorizontalSpace="@dimen/dp_5"
+                app:tagsVerticalSpace="@dimen/dp_5"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</LinearLayout>
