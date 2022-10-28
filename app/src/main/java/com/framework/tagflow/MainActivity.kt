@@ -11,6 +11,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun initView(rootView: View, savedInstanceState: Bundle?) {
         mViewBinding.multiGridRecyclerTagTitle.text = "RecyclerView 演示(Grid)"
         mViewBinding.multiLinearRecyclerTagTitle.text = "RecyclerView 演示(Linear)"
-        mViewBinding.multiFlowTagTitle.text="Flow演示"
+        mViewBinding.multiFlowTagTitle.text="FlowLayout演示"
     }
 }
