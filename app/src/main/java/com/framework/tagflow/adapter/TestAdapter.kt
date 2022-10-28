@@ -22,6 +22,6 @@ class TestAdapter (private val mActivity: Activity) : TagAdapter<SearchHistoryBe
         convertView: View?,
         parent: ViewGroup
     ): View {
-        return LayoutInflater.from(mActivity).inflate(R.layout.activity_main, parent, false)
+        return LayoutInflater.from(mActivity).inflate(R.layout.layout_search_stock_view_item_normal_mode ,parent, false)
     }
 }
