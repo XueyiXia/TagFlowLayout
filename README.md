@@ -89,6 +89,10 @@ dependencies {
             <enum name="StaggeredGridLayoutManager" value="2"/>
         </attr>
     </declare-styleable>
+    
+    
+    ![image](https://user-images.githubusercontent.com/25949241/198843424-76301625-ac71-40ab-b21f-516e02a8aa18.png)
 
 
-## 最后，代码是最好的老师，如果有兴趣，可以下载demo 看看
+
+## 最后，代码是最好的老师，如果有兴趣，可以下载demo 看看，希望这个控件能帮助到你.........END
