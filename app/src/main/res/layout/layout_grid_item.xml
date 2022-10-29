@@ -16,7 +16,7 @@
         android:textSize="@dimen/sp_15"
         android:textColor="@color/color_333333"
         android:textStyle="bold"
-        android:text="香港交易所.香港交易所..."
+        android:text="美国交易所..."
         android:ellipsize="end"
         android:maxEms="5"
         android:maxLines="1"
@@ -37,7 +37,7 @@
             android:id="@+id/stock_icon"
             android:layout_width="@dimen/dp_15"
             android:layout_height="@dimen/dp_15"
-            android:src="@drawable/common_icon_down_arrow"
+           android:background="@color/cardview_shadow_start_color"
             android:layout_gravity="center"/>
 
         <TextView
@@ -47,7 +47,7 @@
             android:textSize="@dimen/sp_15"
             android:textStyle="normal"
             android:layout_marginStart="@dimen/dp_2"
-            android:textColor="@color/color_11AB9B"
+            android:textColor="@color/color_333333"
             android:text="23421"
             android:gravity="center" />
 
@@ -64,17 +64,17 @@
 
         <ImageView
             android:id="@+id/icon_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/dp_15"
+            android:layout_height="@dimen/dp_15"
             android:layout_gravity="center"
-            android:src="@drawable/common_icon_down_arrow" />
+            android:background="@color/color_F5B95F" />
 
         <TextView
             android:id="@+id/stock_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/sp_16"
-            android:textColor="@color/color_11AB9B"
+            android:textColor="@color/color_F0E4D3"
             android:layout_gravity="center"
             android:textStyle="bold"
             android:gravity="center"

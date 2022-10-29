@@ -8,6 +8,8 @@
         <attr name="tagsVerticalSpace" format="dimension" />
         <attr name="animationDuration" format="integer" />
         <attr name="hasMore" format="boolean" />
+        <attr name="foldHint" format="reference|string" />
+        <attr name="expandHint" format="reference|string" />
 
         <!--布局类型，列表或者-->
         <attr name="layout_type" format="reference">

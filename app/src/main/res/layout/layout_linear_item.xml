@@ -5,10 +5,10 @@
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingStart="@dimen/dp_10"
+    android:paddingEnd="@dimen/dp_10"
     android:layout_gravity="center_vertical|center_horizontal"
-    android:background="@drawable/common_bg_radius_15_white"
-    android:layout_margin="@dimen/dp_8"
-    android:padding="@dimen/dp_8">
+    android:background="@drawable/common_bg_radius_white">
 
     <TextView
         android:id="@+id/stock_name"
@@ -17,7 +17,8 @@
         android:textSize="@dimen/sp_15"
         android:textColor="@color/color_333333"
         android:textStyle="bold"
-        android:text="香港交易所.香港交易所..."
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="纳克斯丰谷"
         android:ellipsize="end"
         android:maxEms="5"
         android:maxLines="1"
@@ -38,7 +39,7 @@
             android:id="@+id/stock_icon"
             android:layout_width="@dimen/dp_15"
             android:layout_height="@dimen/dp_15"
-            android:src="@drawable/common_icon_down_arrow"
+            android:background="@color/purple_200"
             android:layout_gravity="center"/>
 
         <TextView
@@ -48,13 +49,14 @@
             android:textSize="@dimen/sp_15"
             android:textStyle="normal"
             android:layout_marginStart="@dimen/dp_2"
-            android:textColor="@color/color_11AB9B"
+            android:textColor="@color/color_EF6A39"
             android:text="23421"
             android:gravity="center" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_per"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,17 +67,17 @@
 
         <ImageView
             android:id="@+id/icon_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/dp_15"
+            android:layout_height="@dimen/dp_15"
             android:layout_gravity="center"
-            android:src="@drawable/common_icon_down_arrow" />
+            android:background="@color/purple_200"/>
 
         <TextView
             android:id="@+id/stock_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/sp_16"
-            android:textColor="@color/color_11AB9B"
+            android:textColor="@color/color_f6Ce7e"
             android:layout_gravity="center"
             android:textStyle="bold"
             android:gravity="center"
@@ -84,4 +86,15 @@
 
     </LinearLayout>
 
+
+    <View
+        android:id="@+id/block_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginTop="@dimen/dp_5"
+        app:layout_constraintTop_toBottomOf="@id/ll_per"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/color_CCC8C2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

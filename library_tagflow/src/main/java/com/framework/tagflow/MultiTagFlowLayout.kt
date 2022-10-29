@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.database.DataSetObserver
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -56,9 +57,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     //false:展开了
     private var isFolded = false
 
-    private var foldHint = resources.getString(R.string.more)    //展开后显示的提示文字
+    private var foldHint = ""    //展开后显示的提示文字
 
-    private var expandHint = resources.getString(R.string.more)    //折叠起来后显示的提示文字
+    private var expandHint = ""   //折叠起来后显示的提示文字
 
     private var animationDuration = 0    //展开和折叠动画持续时间
 
@@ -158,6 +159,10 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         mLayoutType=typedArray.getInt(R.styleable.TagFlowLayout_layout_type,0)
 
         mLayoutManagerMode=typedArray.getInt(R.styleable.TagFlowLayout_layoutManager_Mode,0)
+
+        foldHint = formatString(typedArray.getString(R.styleable.TagFlowLayout_foldHint),resources.getString(R.string.foldHint))
+
+        expandHint = formatString(typedArray.getString(R.styleable.TagFlowLayout_expandHint),resources.getString(R.string.expandHint))
 
         itemModel = ITEM_MODEL_CLICK
 
@@ -332,12 +337,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
                 mRecyclerView.removeAllViews()
-                lines=mRecyclerViewAdapter!!.itemCount
+                lines= mRecyclerViewAdapter?.itemCount ?: 0
             }
 
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
                 mFlowLayout.removeAllViews()
-                lines=mTagAdapter!!.count
+                lines= mTagAdapter?.count ?: 0
             }
             else->{
                 lines=0;
@@ -354,15 +359,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
             layoutParams.height = 0
             mControlScrollView.layoutParams = layoutParams
-
-
             /**
              * 增加空布局
              */
             mEmptyViewContainer.removeAllViews()
             mEmptyViewContainer.addView(mEmptyView)
             mEmptyViewContainer.visibility = View.VISIBLE
-
             mRlShowMore.visibility = View.GONE
             return
         }
@@ -385,7 +387,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 mRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
-                        val itemCount:Int= mRecyclerViewAdapter!!.itemCount
+                        val itemCount:Int= mRecyclerViewAdapter?.itemCount?:0
 
                         var realCount:Int= mRecyclerViewAdapter?.itemCount?:0 ;
                         var maxLine =0.0//最大行数
@@ -405,7 +407,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
                         if (mHasMore) { //有展开更多的布局
                             val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
-
                             /**
                             1.如果已經在爆開的情況下
                             update Data 的話就不用再次收起來
@@ -414,7 +415,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                             3. 如果在爆開的情況下 按"取消"返回上一頁
                               下一次進來要收起
                             首次进入也是收起
-
                              true 标识已经刷新数据了，特殊判断
                             */
                             if(isNotifyData){
@@ -454,7 +454,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             }
 
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
-
                 mFlowLayout.clearAllView()
                 mFlowLayout.removeAllViews()
                 for (i in 0 until mTagAdapter!!.count) {
@@ -494,8 +493,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 mFlowLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
-
-
                         if (mHasMore) { //有展开更多的布局
                             val lines: Int = mFlowLayout.getLineSize()
                             val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
@@ -911,7 +908,21 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         this.tagsVerticalSpace = tagsVerticalSpace
     }
 
+    /**
+     * 格式化字符
+     * @param str
+     * @param defaultString
+     * @return
+     */
+    private fun formatString(str: String?, defaultString: String): String {
+        return if (str.isNullOrEmpty()) {
+            defaultString
+        } else {
+            str
+        }
+    }
 
+/******************************************************* set listener *********************************************************************/
 
 //    fun setOnItemClickListener(listener: OnItemClickListener?) = apply {
 //        this.mOnItemClickListener = listener
