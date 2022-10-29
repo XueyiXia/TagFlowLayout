@@ -642,7 +642,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                     itemHeight=childView.measuredHeight
 
                     //获取设置子view 内外间距的尺寸
-                    spaceHeight=childView.paddingTop+childView.marginTop+childView.paddingBottom+childView.marginBottom
+                    spaceHeight=childView.marginTop+childView.marginBottom
 
                     //计算整个item 的高度
                     itemHeight=(itemHeight+spaceHeight+spacing)
