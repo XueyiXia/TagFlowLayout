@@ -91,8 +91,8 @@ dependencies {
     </declare-styleable>
     
     
-![image](https://user-images.githubusercontent.com/25949241/198843491-3be93e6d-c2a2-416e-9c5e-d49909ad717d.png)
-
+    
+ ![QQ截图20221030005116](https://user-images.githubusercontent.com/25949241/198843533-2fa726b8-ec58-4c4c-96e4-6c8a836661da.png)
 
 
 
