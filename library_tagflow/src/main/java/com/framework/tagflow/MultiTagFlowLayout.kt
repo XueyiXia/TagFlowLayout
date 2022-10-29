@@ -18,9 +18,11 @@ import androidx.core.view.marginTop
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.framework.tagflow.adapter.TagAdapter
+import com.framework.tagflow.adapter.BaseTagAdapter
+import com.framework.tagflow.bean.BaseTagBean
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
+import com.framework.tagflow.tags.MutSelectedTagView
 import com.framework.tagflow.utils.DensityUtils
 import com.framework.tagflow.view.ControlScrollView
 import com.framework.tagflow.view.FlowLayout
@@ -88,12 +90,11 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
 //    private var mOnItemClickListener : OnItemClickListener ?= null
 
-
     private var mLayoutType:Int=0 //布局类型 0：RecyclerView，1：FlowLayout
 
     private var mAdapterDataSetObserver: AdapterDataSetObserver? = null //FlowLayout 适配器监听
 
-    private var mTagAdapter: TagAdapter<*>? = null //FlowLayout 适配器
+    private var mTagAdapter: BaseTagAdapter<*>? = null //FlowLayout 适配器
 
     private lateinit var mFlowLayout: FlowLayout
 
@@ -472,7 +473,21 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                                 return true
                             }
                         })
+                    } else if (itemModel ==ITEM_MODEL_SELECT && mSelectedListener != null) {
+                        view?.setOnClickListener { v ->
+                            if (v is MutSelectedTagView) {
+                                if (!v.isSelected) {
+                                    mTagAdapter!!.select(position)
+                                    mSelectedListener!!.selected(v, position, mTagAdapter!!.getData() as List<BaseTagBean?>)
+                                } else {
+                                    mTagAdapter!!.unSelect(position)
+                                    mSelectedListener!!.unSelected(v, position, mTagAdapter!!.getData() as List<BaseTagBean?>)
+                                }
+                                v.toggle()
+                            }
+                        }
                     }
+
                     mFlowLayout.addView(view)
                 }
 
@@ -688,8 +703,8 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             }
 
             LayoutTypeMode.FlowLayout.index->{
-                if(adapter is TagAdapter<*>){
-                    this.mTagAdapter =adapter as TagAdapter<*>
+                if(adapter is BaseTagAdapter<*>){
+                    this.mTagAdapter =adapter as BaseTagAdapter<*>
                     if (mTagAdapter != null && mAdapterDataSetObserver != null) {
                         this.mTagAdapter?.unregisterDataSetObserver(mAdapterDataSetObserver)
                     }
@@ -904,5 +919,16 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
     fun setOnTagClickListener(onTagClickListener: OnTagClickListener)=apply {
         this.mOnTagClickListener=onTagClickListener
+        if (mTagAdapter != null) {
+            reloadData()
+        }
+    }
+
+
+    open fun setSelectedListener(selectedListener: OnTagSelectedListener?) {
+        this.mSelectedListener = selectedListener
+        if (mTagAdapter != null) {
+            reloadData()
+        }
     }
 }

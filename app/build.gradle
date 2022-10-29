@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.framework.tagflow'
+    namespace 'com.tagflow'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.framework.tagflow"
+        applicationId "com.tagflow"
         minSdk 21
         targetSdk 33
         versionCode 1

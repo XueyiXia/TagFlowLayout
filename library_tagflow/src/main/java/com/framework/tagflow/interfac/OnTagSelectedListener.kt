@@ -1,7 +1,7 @@
 package com.framework.tagflow.interfac
 
 import android.view.View
-import com.aa.cat.ui.view.tagFlow.bean.BaseTagBean
+import com.framework.tagflow.bean.BaseTagBean
 
 /**
  * @author: xiaxueyi

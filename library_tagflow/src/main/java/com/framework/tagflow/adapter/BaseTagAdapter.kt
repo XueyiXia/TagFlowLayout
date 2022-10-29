@@ -3,9 +3,10 @@ package com.framework.tagflow.adapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import com.framework.tagflow.bean.BaseTagBean
 
 
-abstract class TagAdapter<T>() : BaseAdapter() {
+abstract class BaseTagAdapter<T> : BaseAdapter() {
 
     private var dataList: MutableList<T> = mutableListOf()
 
@@ -50,4 +51,28 @@ abstract class TagAdapter<T>() : BaseAdapter() {
         notifyDataSetChanged()
     }
 
+    /**
+     *
+     */
+    open fun select(position: Int) {
+        if (position < 0 || position >= dataList.size) {
+            return
+        }
+        if(dataList[position] is BaseTagBean){
+            (dataList[position] as BaseTagBean).setSelected(true)
+        }
+    }
+
+    /**
+     *
+     */
+    open fun unSelect(position: Int) {
+        if (position < 0 || position >= dataList.size) {
+            return
+        }
+        if(dataList[position] is BaseTagBean){
+           (dataList[position] as BaseTagBean).setSelected(false)
+        }
+
+    }
 }

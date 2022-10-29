@@ -1,4 +1,4 @@
-package com.aa.cat.ui.view.tagFlow.bean
+package com.framework.tagflow.bean
 /**
  * @author: xiaxueyi
  * @date: 2022-09-16

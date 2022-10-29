@@ -2,12 +2,20 @@ package com.framework.tagflow
 
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.Toast
 import com.framework.tagflow.adapter.SearchHistoryGridAdapter
 import com.framework.tagflow.adapter.SearchHistoryLinearAdapter
 import com.framework.tagflow.adapter.TestAdapter
+import com.framework.tagflow.bean.BaseTagBean
 import com.framework.tagflow.bean.SearchHistoryBean
-import com.framework.tagflow.databinding.ActivityMainBinding
+import com.framework.tagflow.interfac.OnTagClickListener
+import com.framework.tagflow.interfac.OnTagSelectedListener
+import com.framework.tagflow.utils.ToastHelper
+import com.framework.tagflow.viewholder.BaseQuickAdapter
 import com.framework.viewbinding.base.BaseActivity
+import com.tagflow.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var mTestAdapter : TestAdapter
@@ -32,6 +40,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
+        mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
+            override fun onClick(view: View?, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+            }
+
+            override fun onLongClick(view: View?, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+            }
+        })
+
+        mViewBinding.multiFlowTag.setItemModel(MultiTagFlowLayout.ITEM_MODEL_SELECT)
+        mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
+
+            override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
+                ToastHelper.showMsgShort(this@MainActivity, "selected事件-->>:$position")
+            }
+
+            override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
+                ToastHelper.showMsgShort(this@MainActivity, "unSelected事件-->>:$position")
+            }
+        })
+
 
 
         mViewBinding.multiGridRecyclerTag.getRecyclerView().addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
@@ -41,7 +71,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             mSearchHistoryGridAdapter.addData(bean)
         }
         mViewBinding.multiGridRecyclerTag.setAdapter(mSearchHistoryGridAdapter)
+        mSearchHistoryGridAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 
+            override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "onItemClick事件-->>:$position")
+            }
+        })
 
         mSearchHistoryLinearAdapter=SearchHistoryLinearAdapter()
         for(index in 0..10){
@@ -49,5 +84,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             mSearchHistoryLinearAdapter.addData(bean)
         }
         mViewBinding.multiLinearRecyclerTag.setAdapter(mSearchHistoryLinearAdapter)
+        mSearchHistoryLinearAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
+
+            override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "onItemClick事件-->>:$position")
+            }
+        })
     }
 }
