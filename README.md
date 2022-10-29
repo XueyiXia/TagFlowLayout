@@ -65,7 +65,19 @@ dependencies {
             }
         })
     }
-    
+
+
+
+##默认tag样式
+
+DefaultTagView (默认实心tag)
+ColorfulTagView (彩色背景实心tag)
+StrokeTagView （空心带边框的tag）
+ColorfulStrokeTagView （空心彩色边框tag）
+自定义tag，继承以上tag或者自定义View
+
+
+
   3可选项(部分属性可直接在xml布局中指定)
 
       <declare-styleable name="TagFlowLayout">
