@@ -1,18 +1,14 @@
-package com.framework.tagflow.listener;
+package com.framework.tagflow.listener
 
-import android.view.View;
-
-import androidx.annotation.NonNull;
-
-import com.framework.tagflow.viewholder.BaseQuickAdapter;
-
+import android.view.View
+import com.framework.tagflow.viewholder.BaseQuickAdapter
 
 /**
  * @author: limuyang
  * @date: 2019-12-03
  * @Description:
  */
-public interface OnItemChildLongClickListener {
+interface OnItemChildLongClickListener {
     /**
      * callback method to be invoked when an item in this view has been
      * click and held
@@ -22,5 +18,5 @@ public interface OnItemChildLongClickListener {
      * @param position The position of the view int the adapter
      * @return true if the callback consumed the long click ,false otherwise
      */
-    boolean onItemChildLongClick(@NonNull BaseQuickAdapter<?,?> adapter, @NonNull View view, int position);
+    fun onItemChildLongClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int): Boolean
 }

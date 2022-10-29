@@ -1,18 +1,14 @@
-package com.framework.tagflow.listener;
+package com.framework.tagflow.listener
 
-import android.view.View;
-
-import androidx.annotation.NonNull;
-
-import com.framework.tagflow.viewholder.BaseQuickAdapter;
-
+import android.view.View
+import com.framework.tagflow.viewholder.BaseQuickAdapter
 
 /**
  * @author: limuyang
  * @date: 2019-12-03
  * @Description:
  */
-public interface OnItemChildClickListener {
+interface OnItemChildClickListener {
     /**
      * callback method to be invoked when an item child in this view has been click
      *
@@ -20,5 +16,5 @@ public interface OnItemChildClickListener {
      * @param view     The view whihin the ItemView that was clicked
      * @param position The position of the view int the adapter
      */
-    void onItemChildClick(@NonNull BaseQuickAdapter<?,?> adapter, @NonNull View view, int position);
+    fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int)
 }
