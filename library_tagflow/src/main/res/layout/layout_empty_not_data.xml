@@ -19,6 +19,7 @@
         android:textColor="@color/color_333333"
         android:textSize="@dimen/sp_15"
         android:textStyle="normal"
+        android:text="暂无数据"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
