@@ -2,20 +2,25 @@
 多样可折叠和展开的标签控件 （RecyclerView和FlowLayout），RecyclerView 只支持垂直九宫格和垂直列表，单选，多选，多行展开缩回的功能
 
 ##先看两张图
+
 ![Screenshot_20221030_003538](https://user-images.githubusercontent.com/25949241/198842906-1c0a98a1-384d-4a5b-997f-9699a7c1f569.png)
 ![Screenshot_20221030_003613](https://user-images.githubusercontent.com/25949241/198842918-fc3a1e11-dc3d-4bbc-81b7-8ffbd1958a67.png)
 
-如果需要看gif 图片，点击这里
+如果需要看gif 图片，看这里
+
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/25949241/198842982-9eabfb25-cdc3-45b3-832a-d1aaad4b84c0.gif)
 
 
 ##How to use Add this to your build.gradle:
+
 dependencies {
+
 		implementation 'com.github.XueyiXia:MultiTagFlowLayout:version' //v1.0.0
 	}
     
     
 1. 定义xml布局
+
             <com.framework.tagflow.MultiTagFlowLayout
                 android:id="@+id/multi_flow_tag"
                 android:layout_width="match_parent"
@@ -84,3 +89,6 @@ dependencies {
             <enum name="StaggeredGridLayoutManager" value="2"/>
         </attr>
     </declare-styleable>
+
+
+## 最后，代码是最好的老师，如果有兴趣，可以下载demo 看看
