@@ -53,6 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
                 app:hasMore="true"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_marginEnd="@dimen/dp_10"
                 app:layout_type="RecyclerView"
                 app:layoutManager_Mode="GridLayoutManager"
                 app:tagsHorizontalSpace="@dimen/dp_5"
