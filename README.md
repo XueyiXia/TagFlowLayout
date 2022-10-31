@@ -3,8 +3,8 @@
 
 ##先看两张图
 
-![image](https://user-images.githubusercontent.com/25949241/198920098-1a007802-4369-468b-b4d4-68f2bb6a96f3.png)
-![image](https://user-images.githubusercontent.com/25949241/198920156-dae9a183-0a83-42d6-b082-02225da98d78.png)
+![image](https://user-images.githubusercontent.com/25949241/198920311-11f5a142-2c6b-44b7-9f4b-da2a2c5a79be.png)
+![image](https://user-images.githubusercontent.com/25949241/198920373-5bb678d4-20ff-4602-8e3d-5e388e05d5f0.png)
 
 如果需要看gif 图片，看这里
 
