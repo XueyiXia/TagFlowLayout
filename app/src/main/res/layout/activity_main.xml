@@ -16,7 +16,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_30">
 
             <TextView
                 android:id="@+id/multi_linear_recycler_tag_title"
@@ -79,6 +80,28 @@
                 android:layout_marginEnd="@dimen/dp_10"
                 app:expandHint="@string/expandHint"
                 app:foldHint="@string/foldHint"
+                app:hasMore="true"
+                app:layout_type="FlowLayout"
+                app:tagsHorizontalSpace="@dimen/dp_5"
+                app:tagsVerticalSpace="@dimen/dp_5"/>
+
+
+            <TextView
+                android:id="@+id/multi_flow_tag_title_self"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/sp_16"/>
+
+            <com.framework.tagflow.MultiTagFlowLayout
+                android:id="@+id/multi_flow_tag_self"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_marginEnd="@dimen/dp_10"
                 app:hasMore="true"
                 app:layout_type="FlowLayout"
                 app:tagsHorizontalSpace="@dimen/dp_5"

@@ -48,7 +48,7 @@
             android:textStyle="normal"
             android:layout_marginStart="@dimen/dp_2"
             android:textColor="@color/color_333333"
-            android:text="23421"
+            android:text="12138"
             android:gravity="center" />
 
     </LinearLayout>
@@ -78,7 +78,7 @@
             android:layout_gravity="center"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="2.76%"
+            android:text="10.98%"
             android:layout_marginStart="@dimen/dp_3" />
 
     </LinearLayout>

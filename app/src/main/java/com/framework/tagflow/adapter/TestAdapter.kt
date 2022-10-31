@@ -2,12 +2,15 @@ package com.framework.tagflow.adapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.framework.tagflow.bean.BaseTagBean
 import com.framework.tagflow.bean.SearchHistoryBean
 import com.framework.tagflow.tags.DefaultTagView
 import com.framework.tagflow.tags.MutSelectedTagView
+import com.tagflow.R
 
 
 /**
@@ -17,16 +20,24 @@ import com.framework.tagflow.tags.MutSelectedTagView
  * @说明:
  */
 @SuppressLint("ViewHolder")
-class TestAdapter (private val mActivity: Activity) : BaseTagAdapter<SearchHistoryBean?>() {
+class TestAdapter (private val mActivity: Activity,var isHint:Boolean) : BaseTagAdapter<SearchHistoryBean?>() {
     override fun getView(
         position: Int,
         convertView: View?,
         parent: ViewGroup
     ): View {
 
-        val textView: DefaultTagView = MutSelectedTagView(mActivity)
-        textView.text = (getItem(position) as BaseTagBean?)?.getName() ?: "add tag"
-        return textView
-//        return LayoutInflater.from(mActivity).inflate(R.layout.layout_tag_item,parent, false)
+        if(isHint){
+            val textView: DefaultTagView = MutSelectedTagView(mActivity)
+            textView.text = (getItem(position) as BaseTagBean?)?.getName() ?: "add tag$position"
+            return textView
+        }else{
+            val view= LayoutInflater.from(mActivity).inflate(R.layout.layout_tag_item,parent, false)
+            val textView: TextView=view.findViewById<TextView>(R.id.stock_name)
+            textView.text = (getItem(position) as BaseTagBean?)?.getName() ?: "tag$position"
+            return view
+        }
+
+
     }
 }

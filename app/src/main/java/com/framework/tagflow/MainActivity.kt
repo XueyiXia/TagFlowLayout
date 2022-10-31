@@ -31,14 +31,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun initView(rootView: View, savedInstanceState: Bundle?) {
         mViewBinding.multiGridRecyclerTagTitle.text = "RecyclerView 演示(Grid)"
         mViewBinding.multiLinearRecyclerTagTitle.text = "RecyclerView 演示(Linear)"
-        mViewBinding.multiFlowTagTitle.text="FlowLayout演示"
-
+        mViewBinding.multiFlowTagTitle.text="FlowLayout演示（自带布局）"
+        mViewBinding.multiFlowTagTitleSelf.text="FlowLayout演示（自定义布局）"
 
         initLinearAdapter()
 
         initGridAdapter()
 
         initTagFlowAdapter()
+
+        initTagFlowAdapterSelf()
 
     }
 
@@ -48,7 +50,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initLinearAdapter(){
         mSearchHistoryLinearAdapter=SearchHistoryLinearAdapter()
-        for(index in 0..10){
+        for(index in 0..5){
             var bean= SearchHistoryBean()
             mSearchHistoryLinearAdapter.addData(bean)
         }
@@ -80,9 +82,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
     private fun initTagFlowAdapter(){
-        mTestAdapter=TestAdapter(this);
+        mTestAdapter=TestAdapter(this,true);
         for(index in 0..10){
             var bean= SearchHistoryBean()
+            bean.title= "ADD TAG$index"
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
@@ -107,5 +110,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 ToastHelper.showMsgShort(this@MainActivity, "unSelected事件-->>:$position")
             }
         })
+    }
+
+
+    private fun initTagFlowAdapterSelf(){
+        mTestAdapter=TestAdapter(this,false);
+        for(index in 0..15){
+            var bean= SearchHistoryBean()
+            bean.setName("ADD TAG BY $index")
+            mTestAdapter.addData(bean)
+        }
+        mViewBinding.multiFlowTagSelf.setAdapter(mTestAdapter)
+        mViewBinding.multiFlowTagSelf.setOnTagClickListener(object :OnTagClickListener{
+            override fun onClick(view: View?, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+            }
+
+            override fun onLongClick(view: View?, position: Int) {
+                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+            }
+        })
+
     }
 }
