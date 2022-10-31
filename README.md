@@ -3,8 +3,8 @@
 
 ##先看两张图
 
-![Screenshot_20221030_003538](https://user-images.githubusercontent.com/25949241/198842906-1c0a98a1-384d-4a5b-997f-9699a7c1f569.png)
-![Screenshot_20221030_003613](https://user-images.githubusercontent.com/25949241/198842918-fc3a1e11-dc3d-4bbc-81b7-8ffbd1958a67.png)
+![image](https://user-images.githubusercontent.com/25949241/198919955-319073d5-ef0b-4a80-9f07-8eaa23982a03.png)
+![image](https://user-images.githubusercontent.com/25949241/198920002-89511b9d-bdca-4b31-86d1-215df79afd75.png)
 
 如果需要看gif 图片，看这里
 
@@ -15,7 +15,7 @@
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:MultiTagFlowLayout:version' //v1.0.0
+		implementation 'com.github.XueyiXia:MultiTagFlowLayout:v1.0.0' //v1.0.0
 	}
     
     
