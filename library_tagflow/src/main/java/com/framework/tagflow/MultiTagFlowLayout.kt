@@ -418,13 +418,18 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                              true 标识已经刷新数据了，特殊判断
                             */
                             if(isNotifyData){
-                                mRlShowMore.visibility = View.VISIBLE
-                                //表示已经展开了
-                                if (isFolded){
+                                if (finalLine <= 3) {
                                     layoutParams.height = getLineHeight() * finalLine
+                                    mRlShowMore.visibility = View.GONE
                                 }else{
-                                    //设置默认展开高度(一个item 高度*多少行)
-                                    layoutParams.height = getLineHeight()* defaultRows
+                                    mRlShowMore.visibility = View.VISIBLE
+                                    //表示已经展开了
+                                    if (isFolded){
+                                        layoutParams.height = getLineHeight() * finalLine
+                                    }else{
+                                        //设置默认展开高度(一个item 高度*多少行)
+                                        layoutParams.height = getLineHeight()* defaultRows
+                                    }
                                 }
                                 mControlScrollView.layoutParams = layoutParams
                             }else{
