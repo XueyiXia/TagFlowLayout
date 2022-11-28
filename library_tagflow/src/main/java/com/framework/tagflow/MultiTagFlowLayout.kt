@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.database.DataSetObserver
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -88,8 +87,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     private var mOnTagClickListener: OnTagClickListener? = null
 
     private var mSelectedListener: OnTagSelectedListener? = null
-
-//    private var mOnItemClickListener : OnItemClickListener ?= null
 
     private var mLayoutType:Int=0 //布局类型 0：RecyclerView，1：FlowLayout
 
@@ -929,9 +926,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
 /******************************************************* set listener *********************************************************************/
 
-//    fun setOnItemClickListener(listener: OnItemClickListener?) = apply {
-//        this.mOnItemClickListener = listener
-//    }
 
     fun setOnTagClickListener(onTagClickListener: OnTagClickListener)=apply {
         this.mOnTagClickListener=onTagClickListener
