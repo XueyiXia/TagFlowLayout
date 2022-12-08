@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import com.framework.tagflow.utils.DensityUtils
 import com.framework.tagflow.R
 
@@ -52,7 +53,7 @@ open class DefaultTagView @JvmOverloads constructor(
     //返回一个Drawable背景样式
     protected open fun getBackgroundDrawable(): Drawable? {
         //设置字体颜色的选择器
-        val colorSateList = mContext.resources.getColorStateList(R.color.secondary_text)
+        val colorSateList =ContextCompat.getColorStateList(context,R.color.secondary_text)
         setTextColor(colorSateList)
         val normal = GradientDrawable()
         normal.shape = GradientDrawable.RECTANGLE

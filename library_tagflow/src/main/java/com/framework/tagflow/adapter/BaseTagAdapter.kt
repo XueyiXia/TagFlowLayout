@@ -59,7 +59,7 @@ abstract class BaseTagAdapter<T> : BaseAdapter() {
             return
         }
         if(dataList[position] is BaseTagBean){
-            (dataList[position] as BaseTagBean).setSelected(true)
+            (dataList[position] as BaseTagBean).setIsSelected(true)
         }
     }
 
@@ -71,7 +71,7 @@ abstract class BaseTagAdapter<T> : BaseAdapter() {
             return
         }
         if(dataList[position] is BaseTagBean){
-           (dataList[position] as BaseTagBean).setSelected(false)
+           (dataList[position] as BaseTagBean).setIsSelected(false)
         }
 
     }

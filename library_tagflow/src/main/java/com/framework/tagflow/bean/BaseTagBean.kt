@@ -9,7 +9,7 @@ package com.framework.tagflow.bean
 open class BaseTagBean {
     private var id = 0
     private var name: String? = null
-    private var selected = false//是否选中
+    private var isSelected = false//是否选中
     private var tag: Any? = null //标签额外信息
 
     fun getId(): Int {
@@ -37,10 +37,10 @@ open class BaseTagBean {
     }
 
     fun isSelected(): Boolean {
-        return selected
+        return isSelected
     }
 
-    fun setSelected(selected: Boolean) {
-        this.selected = selected
+    fun setIsSelected(selected: Boolean) {
+        this.isSelected = selected
     }
 }
