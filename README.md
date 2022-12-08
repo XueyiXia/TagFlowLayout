@@ -1,5 +1,5 @@
-# TagFlowLayout
-多样可折叠和展开的标签控件 （RecyclerView和FlowLayout），RecyclerView 只支持垂直九宫格和垂直列表，单选，多选，多行展开缩回的功能
+# MultiTagFlowLayout
+多样可折叠和展开的标签控件 ，MultiTagFlowLayout相当于一个容器一样， 支持RecyclerView和FlowLayout组件，RecyclerView 只支持垂直九宫格和垂直列表，和RecyclerView 使用一样；FlowLayout 流式布局组件，支持标签，标签单选，标签多选等功能！！！
 
 ##先看两张图
 
@@ -104,7 +104,6 @@ dependencies {
         <attr name="layoutManager_Mode" format="reference">
             <enum name="LinearLayoutManager" value="0"/>
             <enum name="GridLayoutManager" value="1"/>
-            <enum name="StaggeredGridLayoutManager" value="2"/>
         </attr>
     </declare-styleable>
     
