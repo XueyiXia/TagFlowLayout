@@ -15,7 +15,7 @@
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:MultiTagFlowLayout:v1.0.1' //v1.0.0
+		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.2' 
 	}
     
     
