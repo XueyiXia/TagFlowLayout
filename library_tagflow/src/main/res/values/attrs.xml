@@ -21,7 +21,6 @@
         <attr name="layoutManager_Mode" format="reference">
             <enum name="LinearLayoutManager" value="0"/>
             <enum name="GridLayoutManager" value="1"/>
-            <enum name="StaggeredGridLayoutManager" value="2"/>
         </attr>
     </declare-styleable>
 
