@@ -11,11 +11,11 @@
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/25949241/198842982-9eabfb25-cdc3-45b3-832a-d1aaad4b84c0.gif)
 
 
-##How to use Add this to your build.gradle:
+## How to use Add this to your build.gradle:
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.2' 
+		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.3' 
 	}
     
     
@@ -68,7 +68,7 @@ dependencies {
 
 
 
-##默认tag样式
+## 默认tag样式
 
 1.DefaultTagView (默认实心tag)
 
