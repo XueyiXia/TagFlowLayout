@@ -82,7 +82,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mTestAdapter=TestAdapter(this,true);
         for(index in 0..10){
             var bean= SearchHistoryBean()
-            bean.title= "ADD TAG$index"
+            bean.setTitle("ADD TAG$index")
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
