@@ -29,12 +29,12 @@ class TestAdapter (private val mActivity: Activity,var isHint:Boolean) : BaseTag
 
         if(isHint){
             val textView: DefaultTagView = MutSelectedTagView(mActivity)
-            textView.text = (getItem(position) as BaseTagBean?)?.getName() ?: "add tag$position"
+            textView.text = (getItem(position) as BaseTagBean?)?.getTitle() ?: "add tag$position"
             return textView
         }else{
             val view= LayoutInflater.from(mActivity).inflate(R.layout.layout_tag_item,parent, false)
             val textView: TextView=view.findViewById<TextView>(R.id.stock_name)
-            textView.text = (getItem(position) as BaseTagBean?)?.getName() ?: "tag$position"
+            textView.text = (getItem(position) as BaseTagBean?)?.getTitle() ?: "tag$position"
             return view
         }
 

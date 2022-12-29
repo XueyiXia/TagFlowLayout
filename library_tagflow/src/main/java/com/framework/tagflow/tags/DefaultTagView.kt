@@ -9,8 +9,8 @@ import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import com.framework.tagflow.utils.DensityUtils
 import com.framework.tagflow.R
+import com.framework.tagflow.utils.DensityUtils
 
 /**
  * @author: xiaxueyi

@@ -8,7 +8,7 @@ package com.framework.tagflow.bean
 
 open class BaseTagBean {
     private var id = 0
-    private var name: String? = null
+    private var title: String? = null
     private var isSelected = false//是否选中
     private var tag: Any? = null //标签额外信息
 
@@ -20,12 +20,12 @@ open class BaseTagBean {
         this.id = id
     }
 
-    fun getName(): String? {
-        return name
+    fun getTitle(): String? {
+        return title
     }
 
-    fun setName(name: String?) {
-        this.name = name
+    fun setTitle(title: String?) {
+        this.title = title
     }
 
     fun getTag(): Any? {

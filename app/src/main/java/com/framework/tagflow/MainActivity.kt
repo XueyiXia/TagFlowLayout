@@ -2,9 +2,6 @@ package com.framework.tagflow
 
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.Toast
 import com.framework.tagflow.adapter.SearchHistoryGridAdapter
 import com.framework.tagflow.adapter.SearchHistoryLinearAdapter
 import com.framework.tagflow.adapter.TestAdapter
@@ -117,7 +114,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mTestAdapter=TestAdapter(this,false);
         for(index in 0..15){
             var bean= SearchHistoryBean()
-            bean.setName("ADD TAG BY $index")
+            bean.setTitle("ADD TAG BY $index")
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTagSelf.setAdapter(mTestAdapter)

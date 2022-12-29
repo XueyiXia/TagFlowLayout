@@ -128,7 +128,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     enum class LayoutManagerMode(val index: Int){
         LinearLayoutManager(0),
         GridLayoutManager(1),
-        StaggeredGridLayoutManager(2)
     }
 
 
@@ -550,13 +549,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                     mRecyclerView.layoutManager =gridLayoutManager;
                     mRecyclerView.itemAnimator = DefaultItemAnimator()
                 }
-
-                LayoutManagerMode.StaggeredGridLayoutManager.index->{
-                    val sgm = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-                    mRecyclerView.setHasFixedSize(true)
-                    mRecyclerView.layoutManager = sgm
-                    mRecyclerView.itemAnimator = DefaultItemAnimator()
-                }
                 else->{
                     Toast.makeText(context,"un know",Toast.LENGTH_SHORT).show()
                 }
@@ -752,15 +744,8 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 mTagAdapter?.notifyDataSetChanged()
             }
             else->{
-                TODO("Not Things")
             }
         }
-//
-//
-//        ObjectAnimator.ofFloat(mIvArrowMore, "rotation", 0f, 0f).start()
-//        isFolded=false
-
-
         //标识：刷新数据  isNotifyData=true
         isNotifyData=true
     }

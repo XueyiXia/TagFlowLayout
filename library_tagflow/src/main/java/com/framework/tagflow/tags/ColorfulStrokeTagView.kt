@@ -2,7 +2,6 @@ package com.framework.tagflow.tags
 
 import android.content.Context
 import android.util.AttributeSet
-import com.framework.tagflow.tags.ColorfulTagView
 
 /**
  * @author: xiaxueyi
