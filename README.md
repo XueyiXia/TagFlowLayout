@@ -3,9 +3,10 @@
 
 ##先看两张图
 
-![image](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/d9de4b5a-17b4-4f01-a749-b83cedef1020)![image](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/a8c424ce-4ca8-43d9-ae3d-65879d1e2204)
+<img src="https://github.com/XueyiXia/TagFlowLayout/assets/25949241/d5402aa2-469e-4df1-9af9-12f0f87ed85b" width="350px">
 
 
+<img src="https://github.com/XueyiXia/TagFlowLayout/assets/25949241/f9ef28bb-9895-4d2d-b753-a07e7189095b" width="350px">
 
 
 
@@ -43,12 +44,12 @@ dependencies {
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
-   		Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
+   		  Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
                 
             }
 
             override fun onLongClick(view: View?, position: Int) {
-   		Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
+   		  Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
                 
             }
         })
@@ -57,12 +58,12 @@ dependencies {
         mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
 
             override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-   		Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
+   		  Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
                
             }
 
             override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-   		Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
+   		  Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
                 
             }
         })
