@@ -37,17 +37,19 @@ dependencies {
 
         mTestAdapter=TestAdapter(this);
         for(index in 0..10){
-            var bean= SearchHistoryBean()
+            var bean= TestBean()
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+   		Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
 
             override fun onLongClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+   		Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
         })
 
@@ -55,11 +57,13 @@ dependencies {
         mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
 
             override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "selected事件-->>:$position")
+   		Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
+               
             }
 
             override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "unSelected事件-->>:$position")
+   		Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
         })
     }
