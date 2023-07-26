@@ -3,8 +3,7 @@
 
 ##先看两张图
 
-![Screenshot_20230726_114409_com tagflow](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/d9de4b5a-17b4-4f01-a749-b83cedef1020)
-![Screenshot_20230726_114415_com tagflow](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/a8c424ce-4ca8-43d9-ae3d-65879d1e2204)
+![Screenshot_20230726_114409_com tagflow](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/d9de4b5a-17b4-4f01-a749-b83cedef1020)![Screenshot_20230726_114415_com tagflow](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/a8c424ce-4ca8-43d9-ae3d-65879d1e2204)
 
 
 
