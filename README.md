@@ -3,8 +3,10 @@
 
 ##先看两张图
 
-![image](https://user-images.githubusercontent.com/25949241/198920311-11f5a142-2c6b-44b7-9f4b-da2a2c5a79be.png)
-![image](https://user-images.githubusercontent.com/25949241/198920373-5bb678d4-20ff-4602-8e3d-5e388e05d5f0.png)
+![Screenshot_20230726_115124](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/34ecab69-e108-4f87-914d-22b571d6a36f)
+
+![Screenshot_20230726_115144](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/2948bf16-75cb-4283-b9d7-c166df4ce759)
+
 
 
 
