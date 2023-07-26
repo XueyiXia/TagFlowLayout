@@ -6,9 +6,6 @@
 ![image](https://user-images.githubusercontent.com/25949241/198920311-11f5a142-2c6b-44b7-9f4b-da2a2c5a79be.png)
 ![image](https://user-images.githubusercontent.com/25949241/198920373-5bb678d4-20ff-4602-8e3d-5e388e05d5f0.png)
 
-如果需要看gif 图片，看这里
-
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/25949241/198842982-9eabfb25-cdc3-45b3-832a-d1aaad4b84c0.gif)
 
 
 ## How to use Add this to your build.gradle:
