@@ -10,6 +10,17 @@
 
 
 
+
+
+
+## Gif图：
+
+![device-2023-07-26-122816](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/3cabc90b-be4f-4c6a-aba4-2bf6433b2fee)
+
+
+
+
+
 ## How to use Add this to your build.gradle:
 
 dependencies {
