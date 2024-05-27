@@ -4,17 +4,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.ScrollView
+import androidx.core.widget.NestedScrollView
 
 /**
  * 可控制滑动，可控制固定
  */
-class ControlScrollView : ScrollView {
+class ControlScrollView(context: Context, attrs: AttributeSet) : NestedScrollView(context,attrs) {
     private var forceFixed = false//强制固定
 
     private var canScroll = false
 
-    constructor(context: Context?) : super(context) {}
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
 
     /**
      * 是否可以滑动
