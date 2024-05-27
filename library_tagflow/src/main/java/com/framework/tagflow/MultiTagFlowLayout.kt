@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.annotation.IntDef
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -230,11 +231,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
                 LayoutTypeMode.FlowLayout.index->{
                     realCount=mFlowLayout.getLineSize()
-
-                    if (realCount >= 6){
-                        realCount = 6
-                    }
-
                 } else->{
                     realCount=0
                 }
@@ -312,13 +308,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         }
 
         val animator: ValueAnimator = ValueAnimator.ofInt(start, end)
-
         animator.duration = animationDuration.toLong()
         animator.addUpdateListener { animation ->
             val value = animation.animatedValue as Int
-            val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
-            layoutParams.height = value
-            mControlScrollView.layoutParams = layoutParams
+            mControlScrollView.updateLayoutParams {
+                this.height=value
+            }
         }
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.start()
@@ -329,32 +324,32 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 重新设置数据
      */
     private fun reloadData() {
-        var lines:Int=0;
-        when(mLayoutType){
+        val lines = when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
                 mRecyclerView.removeAllViews()
-                lines= mRecyclerViewAdapter?.itemCount ?: 0
+                mRecyclerViewAdapter?.itemCount ?: 0
             }
 
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
                 mFlowLayout.removeAllViews()
-                lines= mTagAdapter?.count ?: 0
+                mTagAdapter?.count ?: 0
             }
             else->{
-                lines=0;
+                0
             }
         }
         /**
          * 如果行数为0，重新渲染布局
          */
         if (lines == 0) {
-            val params: ViewGroup.LayoutParams=this.layoutParams
-            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-            this.layoutParams=params
+            this.updateLayoutParams {
+                this.height = ViewGroup.LayoutParams.MATCH_PARENT
+            }
 
-            val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
-            layoutParams.height = 0
-            mControlScrollView.layoutParams = layoutParams
+            mControlScrollView.updateLayoutParams {
+                this.height = 0
+            }
+
             /**
              * 增加空布局
              */
@@ -372,22 +367,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
-
-//                if(getAdapter() is BaseQuickAdapter<*,*>){
-//                    (getAdapter() as BaseQuickAdapter<*,*>).setOnItemClickListener { adapter, view, position ->
-//                        mOnItemClickListener?.onItemClick(position)
-//                    }
-//                }
-
-
                 mRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
                         val itemCount:Int= mRecyclerViewAdapter?.itemCount?:0
-
-                        var realCount:Int= mRecyclerViewAdapter?.itemCount?:0 ;
+                        val realCount:Int= mRecyclerViewAdapter?.itemCount?:0 ;
                         var maxLine =0.0//最大行数
-
                         if(mRecyclerView.layoutManager is GridLayoutManager){
                             val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
                             if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
@@ -400,54 +385,46 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                         //最终行数，向上取整,
                         val finalLine= ceil(maxLine).toInt()
 
-
                         if (mHasMore) { //有展开更多的布局
-                            val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
-                            /**
-                            1.如果已經在爆開的情況下
-                            update Data 的話就不用再次收起來
-                            2.但如果是在收起的情況下
-                            update Data 就保持收起
-                            3. 如果在爆開的情況下 按"取消"返回上一頁
-                              下一次進來要收起
-                            首次进入也是收起
-                             true 标识已经刷新数据了，特殊判断
-                            */
+                            var controlScrollViewHeight=0
                             if(isNotifyData){
                                 if (finalLine <= 3) {
-                                    layoutParams.height = getLineHeight() * finalLine
+                                    controlScrollViewHeight = getLineHeight() * finalLine
                                     mRlShowMore.visibility = View.GONE
                                 }else{
                                     mRlShowMore.visibility = View.VISIBLE
                                     //表示已经展开了
-                                    if (isFolded){
-                                        layoutParams.height = getLineHeight() * finalLine
+                                    controlScrollViewHeight = if (isFolded){
+                                        getLineHeight() * finalLine
                                     }else{
                                         //设置默认展开高度(一个item 高度*多少行)
-                                        layoutParams.height = getLineHeight()* defaultRows
+                                        getLineHeight()* defaultRows
                                     }
                                 }
-                                mControlScrollView.layoutParams = layoutParams
+
+                                mControlScrollView.updateLayoutParams {
+                                    this.height = controlScrollViewHeight
+                                }
                             }else{
                                 if (finalLine <= 3) {
-                                    layoutParams.height = getLineHeight() * finalLine
+                                    controlScrollViewHeight = getLineHeight() * finalLine
                                     mRlShowMore.visibility = View.GONE
                                 } else {
                                     //设置默认展开高度(一个item 高度*多少行)
-                                    layoutParams.height = getLineHeight()* defaultRows
+                                    controlScrollViewHeight = getLineHeight()* defaultRows
                                     mRlShowMore.visibility = View.VISIBLE
                                 }
-                                mControlScrollView.layoutParams = layoutParams
-                            }
 
+                                mControlScrollView.updateLayoutParams {
+                                    this.height = controlScrollViewHeight
+                                }
+                            }
 
                         } else { //没有展开更多的布局
                             mRlShowMore.visibility = View.GONE
-                            val layoutParams: ViewGroup.LayoutParams? = mControlScrollView.layoutParams
-                            if (layoutParams != null) {
-                                layoutParams.height = getLineHeight() * itemCount
+                            mControlScrollView.updateLayoutParams {
+                                this.height = getLineHeight() * itemCount
                             }
-                            mControlScrollView.layoutParams = layoutParams
                         }
                         mRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
@@ -457,63 +434,63 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
                 mFlowLayout.clearAllView()
                 mFlowLayout.removeAllViews()
-                for (i in 0 until mTagAdapter!!.count) {
-                    val view = mTagAdapter?.getView(i, convertView = null, mFlowLayout)
+                mTagAdapter?.let {
+                    for (i in 0 until it.count) {
+                        val view = mTagAdapter?.getView(i, convertView = null, mFlowLayout)
+                        val position:Int=i
+                        if (itemModel == ITEM_MODEL_CLICK && mOnTagClickListener != null) {
 
-                    var position:Int=i;
-                    if (itemModel == ITEM_MODEL_CLICK && mOnTagClickListener != null) {
+                            view?.setOnClickListener { v ->
+                                mOnTagClickListener?.onClick(v,position)
+                            }
 
-                        view?.setOnClickListener { v ->
-                            mOnTagClickListener?.onClick(v,position)
-                        }
-
-                        view?.setOnLongClickListener(object : OnLongClickListener {
-                            override fun onLongClick(v: View): Boolean {
+                            view?.setOnLongClickListener { v ->
                                 mOnTagClickListener?.onLongClick(v, position)
-                                return true
+                                true
                             }
-                        })
-                    } else if (itemModel ==ITEM_MODEL_SELECT && mSelectedListener != null) {
-                        view?.setOnClickListener { v ->
-                            if (v is MutSelectedTagView) {
-                                if (!v.isSelected) {
-                                    mTagAdapter!!.select(position)
-                                    mSelectedListener!!.selected(v, position, mTagAdapter!!.getData() as List<BaseTagBean?>)
-                                } else {
-                                    mTagAdapter!!.unSelect(position)
-                                    mSelectedListener!!.unSelected(v, position, mTagAdapter!!.getData() as List<BaseTagBean?>)
+
+                        } else if (itemModel ==ITEM_MODEL_SELECT && mSelectedListener != null) {
+                            view?.setOnClickListener { v ->
+                                if (v is MutSelectedTagView) {
+                                    if (!v.isSelected) {
+                                        mTagAdapter?.select(position)
+                                        mSelectedListener?.selected(v, position, mTagAdapter?.getData() as List<BaseTagBean?>)
+                                    } else {
+                                        mTagAdapter?.unSelect(position)
+                                        mSelectedListener?.unSelected(v, position, mTagAdapter?.getData() as List<BaseTagBean?>)
+                                    }
+                                    v.toggle()
                                 }
-                                v.toggle()
                             }
                         }
-                    }
 
-                    mFlowLayout.addView(view)
+                        mFlowLayout.addView(view)
+                    }
                 }
+
 
                 mFlowLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
                         if (mHasMore) { //有展开更多的布局
-                            val lines: Int = mFlowLayout.getLineSize()
-                            val layoutParams: ViewGroup.LayoutParams = mControlScrollView.layoutParams
+                            var controlScrollViewHeight=0
                             if (lines <= 3) {
-                                layoutParams.height = getLineHeight() * lines
+                                controlScrollViewHeight = getLineHeight() * lines
                                 mRlShowMore.visibility = View.GONE
                             } else {
-                                layoutParams.height = getLineHeight() * 3
+                                controlScrollViewHeight = getLineHeight() * 3
                                 mRlShowMore.visibility = View.VISIBLE
                             }
-                            mControlScrollView.layoutParams = layoutParams
+
+                            mControlScrollView.updateLayoutParams {
+                                this.height=controlScrollViewHeight
+                            }
 
                         } else { //没有展开更多的布局
                             mRlShowMore.visibility = View.GONE
-                            var layoutParams: ViewGroup.LayoutParams? = mControlScrollView.layoutParams
-                            val lines: Int = mFlowLayout.getLineSize()
-                            if (layoutParams != null) {
-                                layoutParams.height = getLineHeight() * lines
+                            mControlScrollView.updateLayoutParams {
+                                this.height=getLineHeight() * lines
                             }
-                            mControlScrollView.layoutParams = layoutParams
                         }
                         mFlowLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
@@ -534,7 +511,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         if(mLayoutType== LayoutTypeMode.RecyclerView.index){
             when(mLayoutManagerMode){
                 LayoutManagerMode.LinearLayoutManager.index->{
-                    val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(context)
+                    val linearLayoutManager = LinearLayoutManager(context)
                     linearLayoutManager.orientation= LinearLayoutManager.VERTICAL
                     mRecyclerView.setHasFixedSize(true)
                     mRecyclerView.layoutManager =linearLayoutManager;
@@ -543,14 +520,14 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
 
                 LayoutManagerMode.GridLayoutManager.index->{
-                    val gridLayoutManager: GridLayoutManager = GridLayoutManager(context,3)
+                    val gridLayoutManager = GridLayoutManager(context,3)
                     gridLayoutManager.orientation= GridLayoutManager.VERTICAL
                     mRecyclerView.setHasFixedSize(true)
                     mRecyclerView.layoutManager =gridLayoutManager;
                     mRecyclerView.itemAnimator = DefaultItemAnimator()
                 }
                 else->{
-                    Toast.makeText(context,"un know",Toast.LENGTH_SHORT).show()
+
                 }
             }
         }
@@ -604,7 +581,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             }
 
             else->{
-                Toast.makeText(mContext,"Un know ",Toast.LENGTH_SHORT).show()
+
             }
         }
     }
@@ -621,23 +598,18 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{
-                val childCount:Int= mRecyclerView.childCount
-                println(childCount)
-
                 val childView=mRecyclerView.getChildAt(0)
-                println(childView)
-
                 val itemDecorationCount:Int=mRecyclerView.itemDecorationCount
                 if(itemDecorationCount>0){
                     if(mRecyclerView.layoutManager is GridLayoutManager){
                         val itemDecoration:ItemDecoration=mRecyclerView.getItemDecorationAt(0)
                         val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
                         if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
-                            if(itemDecoration is GridLayoutItemDecoration){
-                                val gridLayoutItemDecoration: GridLayoutItemDecoration = itemDecoration as GridLayoutItemDecoration
-                                spacing= gridLayoutItemDecoration.getSpaceHeight()
+                            spacing = if(itemDecoration is GridLayoutItemDecoration){
+                                val gridLayoutItemDecoration: GridLayoutItemDecoration = itemDecoration
+                                gridLayoutItemDecoration.getSpaceHeight()
                             }else{
-                                spacing=0
+                                0
                             }
                         }
                     }
@@ -646,14 +618,11 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 if(childView!=null){
                     //子view 的高度
                     itemHeight=childView.measuredHeight
-
                     //获取设置子view 内外间距的尺寸
                     spaceHeight=childView.marginTop+childView.marginBottom
-
                     //计算整个item 的高度
                     itemHeight=(itemHeight+spaceHeight+spacing)
 
-                    println(itemHeight)
                 }
             }
 
@@ -675,40 +644,33 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * @param adapter Any
      */
     fun setAdapter(adapter:Any){
-        when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{
-                if(adapter is RecyclerView.Adapter<*>){
-                    this.mRecyclerViewAdapter = adapter as RecyclerView.Adapter<*>
+        if (mLayoutType==LayoutTypeMode.RecyclerView.index){
+            if(adapter is RecyclerView.Adapter<*>){
+                this.mRecyclerViewAdapter = adapter
+                mRecyclerView.adapter=mRecyclerViewAdapter
 
-                    mRecyclerView.adapter=mRecyclerViewAdapter
-
-                    if (mRecyclerViewAdapter != null && mRecyclerViewAdapterDataSetObserver != null) {
-                        this.mRecyclerViewAdapter!!.unregisterAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
+                mRecyclerViewAdapter?.let { recyclerViewAdapter->
+                    if (mRecyclerViewAdapterDataSetObserver != null) {
+                        recyclerViewAdapter.unregisterAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
                     }
-                    if (this.mRecyclerViewAdapter != null) {
-                        mRecyclerViewAdapterDataSetObserver = RecyclerViewAdapterDataSetObserver()
-                        this.mRecyclerViewAdapter!!.registerAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
-                        reloadData()
-                    }
+                    mRecyclerViewAdapterDataSetObserver = RecyclerViewAdapterDataSetObserver()
+                    recyclerViewAdapter.registerAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
+                    reloadData()
                 }
             }
 
-            LayoutTypeMode.FlowLayout.index->{
-                if(adapter is BaseTagAdapter<*>){
-                    this.mTagAdapter =adapter as BaseTagAdapter<*>
-                    if (mTagAdapter != null && mAdapterDataSetObserver != null) {
-                        this.mTagAdapter?.unregisterDataSetObserver(mAdapterDataSetObserver)
+        }else{
+
+            if(adapter is BaseTagAdapter<*>){
+                this.mTagAdapter = adapter
+                mTagAdapter?.let { tagAdapterIt->
+                    if (mAdapterDataSetObserver != null) {
+                        tagAdapterIt.unregisterDataSetObserver(mAdapterDataSetObserver)
                     }
-                    if (this.mTagAdapter != null) {
-                        mAdapterDataSetObserver = AdapterDataSetObserver()
-                        this.mTagAdapter!!.registerDataSetObserver(mAdapterDataSetObserver)
-                        reloadData()
-                    }
+                    mAdapterDataSetObserver = AdapterDataSetObserver()
+                    tagAdapterIt.registerDataSetObserver(mAdapterDataSetObserver)
+                    reloadData()
                 }
-            }
-
-            else->{
-
             }
         }
     }
@@ -718,15 +680,17 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 获取适配器
      */
     private fun getAdapter():Any? {
-        when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{
-                return  mRecyclerViewAdapter as Any
+        return if (mLayoutType==LayoutTypeMode.RecyclerView.index){
+            if(mRecyclerViewAdapter is RecyclerView.Adapter<*>){
+                mRecyclerViewAdapter as RecyclerView.Adapter<*>
+            } else {
+                null
             }
-            LayoutTypeMode.FlowLayout.index->{
-                return  mTagAdapter as Any
-            }
-            else->{
-                return null
+        }else{
+            if(mTagAdapter is BaseTagAdapter<*>){
+                mTagAdapter
+            } else {
+                null
             }
         }
     }
@@ -738,7 +702,10 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     fun notifyDataSetChanged(){
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{
-                mRecyclerViewAdapter?.notifyDataSetChanged()
+                mRecyclerViewAdapter?.let {
+                    it.notifyItemRangeChanged(0, it.itemCount)
+                }
+
             }
             LayoutTypeMode.FlowLayout.index->{
                 mTagAdapter?.notifyDataSetChanged()

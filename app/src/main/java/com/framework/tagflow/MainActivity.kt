@@ -15,7 +15,7 @@ import com.framework.viewbinding.base.BaseActivity
 import com.tagflow.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
-    private lateinit var mTestAdapter : TestAdapter
+
 
     private lateinit var mSearchHistoryGridAdapter: SearchHistoryGridAdapter
 
@@ -65,7 +65,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewBinding.multiGridRecyclerTag.getRecyclerView().addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
         mSearchHistoryGridAdapter=SearchHistoryGridAdapter()
         for(index in 0..10){
-            var bean= SearchHistoryBean()
+            val bean= SearchHistoryBean()
             mSearchHistoryGridAdapter.addData(bean)
         }
         mViewBinding.multiGridRecyclerTag.setAdapter(mSearchHistoryGridAdapter)
@@ -79,12 +79,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
     private fun initTagFlowAdapter(){
-        mTestAdapter=TestAdapter(this,true);
-        for(index in 0..10){
-            var bean= SearchHistoryBean()
+        val dataList:MutableList<SearchHistoryBean> = mutableListOf()
+        val mTestAdapter=TestAdapter(this,true);
+        for(index in 0..50){
+            val bean= SearchHistoryBean()
             bean.setTitle("ADD TAG$index")
-            mTestAdapter.addData(bean)
+            dataList.add(bean)
+
         }
+        mTestAdapter.addAllList(dataList)
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
@@ -111,12 +114,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
     private fun initTagFlowAdapterSelf(){
-        mTestAdapter=TestAdapter(this,false);
-        for(index in 0..15){
-            var bean= SearchHistoryBean()
+        val dataList:MutableList<SearchHistoryBean> = mutableListOf()
+        val mTestAdapter=TestAdapter(this,false);
+        for(index in 0..50){
+            val bean= SearchHistoryBean()
             bean.setTitle("ADD TAG BY $index")
-            mTestAdapter.addData(bean)
+            dataList.add(bean)
         }
+        mTestAdapter.addAllList(dataList)
         mViewBinding.multiFlowTagSelf.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTagSelf.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
