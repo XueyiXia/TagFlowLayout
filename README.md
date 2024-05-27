@@ -3,19 +3,29 @@
 
 ##先看两张图
 
-![image](https://user-images.githubusercontent.com/25949241/198920311-11f5a142-2c6b-44b7-9f4b-da2a2c5a79be.png)
-![image](https://user-images.githubusercontent.com/25949241/198920373-5bb678d4-20ff-4602-8e3d-5e388e05d5f0.png)
-
-如果需要看gif 图片，看这里
-
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/25949241/198842982-9eabfb25-cdc3-45b3-832a-d1aaad4b84c0.gif)
+<img src="https://github.com/XueyiXia/TagFlowLayout/assets/25949241/d5402aa2-469e-4df1-9af9-12f0f87ed85b" width="350px">
 
 
-##How to use Add this to your build.gradle:
+<img src="https://github.com/XueyiXia/TagFlowLayout/assets/25949241/f9ef28bb-9895-4d2d-b753-a07e7189095b" width="350px">
+
+
+
+
+
+
+## Gif图：
+
+![device-2023-07-26-122816](https://github.com/XueyiXia/TagFlowLayout/assets/25949241/3cabc90b-be4f-4c6a-aba4-2bf6433b2fee)
+
+
+
+
+
+## How to use Add this to your build.gradle:
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.2' 
+		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.3' 
 	}
     
     
@@ -39,17 +49,19 @@ dependencies {
 
         mTestAdapter=TestAdapter(this);
         for(index in 0..10){
-            var bean= SearchHistoryBean()
+            var bean= TestBean()
             mTestAdapter.addData(bean)
         }
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+   		  Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
 
             override fun onLongClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+   		  Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
         })
 
@@ -57,18 +69,20 @@ dependencies {
         mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
 
             override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "selected事件-->>:$position")
+   		  Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
+               
             }
 
             override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "unSelected事件-->>:$position")
+   		  Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
+                
             }
         })
     }
 
 
 
-##默认tag样式
+## 默认tag样式
 
 1.DefaultTagView (默认实心tag)
 

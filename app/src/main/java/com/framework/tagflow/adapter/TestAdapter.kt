@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.framework.tagflow.bean.BaseTagBean
-import com.framework.tagflow.bean.SearchHistoryBean
+import com.framework.tagflow.bean.TestBean
 import com.framework.tagflow.tags.DefaultTagView
 import com.framework.tagflow.tags.MutSelectedTagView
 import com.tagflow.R
@@ -20,7 +20,7 @@ import com.tagflow.R
  * @说明:
  */
 @SuppressLint("ViewHolder")
-class TestAdapter (private val mActivity: Activity,var isHint:Boolean) : BaseTagAdapter<SearchHistoryBean?>() {
+class TestAdapter (private val mActivity: Activity,var isHint:Boolean) : BaseTagAdapter<TestBean?>() {
     override fun getView(
         position: Int,
         convertView: View?,

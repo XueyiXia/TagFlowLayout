@@ -2,14 +2,14 @@ package com.framework.tagflow
 
 import android.os.Bundle
 import android.view.View
-import com.framework.tagflow.adapter.SearchHistoryGridAdapter
-import com.framework.tagflow.adapter.SearchHistoryLinearAdapter
+import android.widget.Toast
+import com.framework.tagflow.adapter.TestGridAdapter
+import com.framework.tagflow.adapter.TestLinearAdapter
 import com.framework.tagflow.adapter.TestAdapter
 import com.framework.tagflow.bean.BaseTagBean
-import com.framework.tagflow.bean.SearchHistoryBean
+import com.framework.tagflow.bean.TestBean
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
-import com.framework.tagflow.utils.ToastHelper
 import com.framework.tagflow.viewholder.BaseQuickAdapter
 import com.framework.viewbinding.base.BaseActivity
 import com.tagflow.databinding.ActivityMainBinding
@@ -17,9 +17,9 @@ import com.tagflow.databinding.ActivityMainBinding
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
-    private lateinit var mSearchHistoryGridAdapter: SearchHistoryGridAdapter
+    private lateinit var mTestGridAdapter: TestGridAdapter
 
-    private lateinit var mSearchHistoryLinearAdapter: SearchHistoryLinearAdapter
+    private lateinit var mSearchHistoryLinearAdapter: TestLinearAdapter
 
     private val mGridSpace:Int=32; //九宫格分割线间隙
 
@@ -46,16 +46,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
     private fun initLinearAdapter(){
-        mSearchHistoryLinearAdapter=SearchHistoryLinearAdapter()
+        mSearchHistoryLinearAdapter=TestLinearAdapter()
         for(index in 0..5){
-            var bean= SearchHistoryBean()
+            var bean= TestBean()
             mSearchHistoryLinearAdapter.addData(bean)
         }
         mViewBinding.multiLinearRecyclerTag.setAdapter(mSearchHistoryLinearAdapter)
         mSearchHistoryLinearAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "onItemClick事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"onItemClick事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -63,22 +64,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initGridAdapter(){
         mViewBinding.multiGridRecyclerTag.getRecyclerView().addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
-        mSearchHistoryGridAdapter=SearchHistoryGridAdapter()
+        mTestGridAdapter=TestGridAdapter()
         for(index in 0..10){
+            var bean= TestBean()
+            mTestGridAdapter.addData(bean)
             val bean= SearchHistoryBean()
             mSearchHistoryGridAdapter.addData(bean)
         }
-        mViewBinding.multiGridRecyclerTag.setAdapter(mSearchHistoryGridAdapter)
-        mSearchHistoryGridAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
+        mViewBinding.multiGridRecyclerTag.setAdapter(mTestGridAdapter)
+        mTestGridAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "onItemClick事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"onItemClick事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
     }
 
 
     private fun initTagFlowAdapter(){
+        mTestAdapter=TestAdapter(this,true);
+        for(index in 0..10){
+            var bean= TestBean()
         val dataList:MutableList<SearchHistoryBean> = mutableListOf()
         val mTestAdapter=TestAdapter(this,true);
         for(index in 0..50){
@@ -91,11 +98,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewBinding.multiFlowTag.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTag.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
 
             override fun onLongClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -103,11 +112,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
 
             override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "selected事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
 
             override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
-                ToastHelper.showMsgShort(this@MainActivity, "unSelected事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -118,6 +129,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val mTestAdapter=TestAdapter(this,false);
         for(index in 0..50){
             val bean= SearchHistoryBean()
+        mTestAdapter=TestAdapter(this,false);
+        for(index in 0..15){
+            var bean= TestBean()
             bean.setTitle("ADD TAG BY $index")
             dataList.add(bean)
         }
@@ -125,11 +139,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewBinding.multiFlowTagSelf.setAdapter(mTestAdapter)
         mViewBinding.multiFlowTagSelf.setOnTagClickListener(object :OnTagClickListener{
             override fun onClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "点击事件-->>:$position")
+                Toast.makeText(this@MainActivity,"点击事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
 
             override fun onLongClick(view: View?, position: Int) {
-                ToastHelper.showMsgShort(this@MainActivity, "长按事件-->>:$position")
+
+                Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
 

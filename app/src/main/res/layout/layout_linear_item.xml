@@ -11,14 +11,14 @@
     android:background="@drawable/common_bg_radius_white">
 
     <TextView
-        android:id="@+id/stock_name"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/sp_15"
         android:textColor="@color/color_333333"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/dp_5"
-        android:text="纳克斯.US"
+        android:text="Linear Test"
         android:ellipsize="end"
         android:maxEms="5"
         android:maxLines="1"
@@ -26,31 +26,31 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <LinearLayout
-        android:id="@+id/ll_stock_explain"
+        android:id="@+id/ll_explain"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginTop="@dimen/dp_4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stock_name">
+        app:layout_constraintTop_toBottomOf="@+id/name">
 
         <ImageView
-            android:id="@+id/stock_icon"
+            android:id="@+id/icon"
             android:layout_width="@dimen/dp_15"
             android:layout_height="@dimen/dp_15"
             android:background="@color/purple_200"
             android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/stock_no"
+            android:id="@+id/num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/sp_15"
             android:textStyle="normal"
             android:layout_marginStart="@dimen/dp_2"
             android:textColor="@color/color_EF6A39"
-            android:text="98168"
+            android:text="98258"
             android:gravity="center" />
 
     </LinearLayout>
@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_1"
         android:layout_marginTop="@dimen/dp_5"
-        app:layout_constraintTop_toBottomOf="@id/ll_stock_explain"
+        app:layout_constraintTop_toBottomOf="@id/ll_explain"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
