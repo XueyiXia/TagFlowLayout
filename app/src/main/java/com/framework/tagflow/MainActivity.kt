@@ -117,7 +117,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun initTagFlowAdapterSelf(){
         val dataList:MutableList<TestBean> = mutableListOf()
         val mTestAdapter=TestAdapter(this,false);
-        for(index in 0..100){
+        for(index in 0..50){
             val bean= TestBean()
             bean.setTitle("ADD TAG BY $index")
             dataList.add(bean)

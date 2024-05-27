@@ -3,10 +3,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
+//    id 'maven-publish'
 }
-group = 'com.github.XueyiXia'
-version = '1.0'
+//group = 'com.github.XueyiXia'
+//version = '1.0'
 android {
     namespace 'com.framework.viewbinding'
     compileSdk 34
@@ -39,19 +39,19 @@ android {
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.XueyiXia'
-                artifactId = 'ViewBinding_kotlin'
-                version = '1.0'
-            }
-        }
-    }
-}
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            // Creates a Maven publication called "release".
+//            release(MavenPublication) {
+//                from components.release
+//                groupId = 'com.github.XueyiXia'
+//                artifactId = 'ViewBinding_kotlin'
+//                version = '1.0'
+//            }
+//        }
+//    }
+//}
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
