@@ -25,7 +25,7 @@
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.3' 
+		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.5' 
 	}
     
     
