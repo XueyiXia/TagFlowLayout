@@ -24,6 +24,7 @@ import com.framework.tagflow.bean.BaseTagBean
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
 import com.framework.tagflow.tags.MutSelectedTagView
+import com.framework.tagflow.tags.NonTouchableRecyclerView
 import com.framework.tagflow.utils.DensityUtils
 import com.framework.tagflow.view.ControlScrollView
 import com.framework.tagflow.view.FlowLayout
@@ -83,7 +84,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
     private var mRecyclerViewAdapter: RecyclerView.Adapter<*>? = null
 
-    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mRecyclerView: NonTouchableRecyclerView
 
     private var defaultRows:Int=3 //默认行数三行
 
@@ -567,7 +568,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         }
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{
-                mRecyclerView = RecyclerView(mContext)
+                mRecyclerView = NonTouchableRecyclerView(mContext)
                 mControlScrollView.addView(mRecyclerView)
             }
 
