@@ -48,7 +48,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun initLinearAdapter(){
         mTestLinearAdapter=TestLinearAdapter()
         for(index in 0..5){
-            var bean= TestBean()
+            val bean= TestBean()
+
+            if (index==0){
+                bean.setTitle("Linear Test")
+            }else if (index==2){
+                bean.setTitle("垂直线性布局 Test")
+            }else{
+                bean.setTitle("Test")
+            }
+
+            bean.setId(index)
             mTestLinearAdapter.addData(bean)
         }
         mViewBinding.multiLinearRecyclerTag.setAdapter(mTestLinearAdapter)
@@ -66,6 +76,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mTestGridAdapter= TestGridAdapter()
         for(index in 0..10){
             val bean= TestBean()
+            if (index==0){
+                bean.setTitle("Grid Test ")
+            }else if (index==2){
+                bean.setTitle("九宫格布局测试 Test")
+            }else{
+                bean.setTitle("Test")
+            }
+            bean.setId(index)
             mTestGridAdapter.addData(bean)
         }
         mViewBinding.multiGridRecyclerTag.setAdapter(mTestGridAdapter)

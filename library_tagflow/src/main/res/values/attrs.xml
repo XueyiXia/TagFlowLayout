@@ -3,7 +3,7 @@
 
 
     <!--流布局-->
-    <declare-styleable name="TagFlowLayout">
+    <declare-styleable name="MultiTagFlowLayout">
         <attr name="tagsHorizontalSpace" format="dimension" />
         <attr name="tagsVerticalSpace" format="dimension" />
         <attr name="animationDuration" format="integer" />

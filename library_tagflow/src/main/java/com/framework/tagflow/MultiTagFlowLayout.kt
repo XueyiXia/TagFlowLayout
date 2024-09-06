@@ -42,6 +42,20 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : NestedScrollView(mContext, attrs, defStyleAttr) {
 
+    companion object {
+
+        //默认标签之间的间距
+        private const val DEFAULT_TAGS_SPACE = 8f
+
+        //默认展开动画执行时间(毫秒)
+        private const val DEFAULT_ANIMATION_DURATION = 400
+
+        const val ITEM_MODEL_CLICK = 100000
+
+        const val ITEM_MODEL_SELECT = 100001
+
+    }
+
     private lateinit var mControlScrollView: ControlScrollView     //标签容器
 
     private lateinit var mIvArrowMore: ImageView    //箭头
@@ -106,19 +120,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     private lateinit var mEmptyView:View;
 
 
-    companion object {
 
-        //默认标签之间的间距
-        private const val DEFAULT_TAGS_SPACE = 8f
-
-        //默认展开动画执行时间(毫秒)
-        private const val DEFAULT_ANIMATION_DURATION = 400
-
-        const val ITEM_MODEL_CLICK = 100000
-
-        const val ITEM_MODEL_SELECT = 100001
-
-    }
 
 
     /**
@@ -143,23 +145,23 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     }
 
     init {
-        val typedArray: TypedArray = mContext.obtainStyledAttributes(attrs, R.styleable.TagFlowLayout)
+        val typedArray: TypedArray = mContext.obtainStyledAttributes(attrs, R.styleable.MultiTagFlowLayout)
 
-        tagsHorizontalSpace = typedArray.getDimension(R.styleable.TagFlowLayout_tagsHorizontalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
+        tagsHorizontalSpace = typedArray.getDimension(R.styleable.MultiTagFlowLayout_tagsHorizontalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
 
-        tagsVerticalSpace = typedArray.getDimension(R.styleable.TagFlowLayout_tagsVerticalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
+        tagsVerticalSpace = typedArray.getDimension(R.styleable.MultiTagFlowLayout_tagsVerticalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
 
-        animationDuration = typedArray.getInt(R.styleable.TagFlowLayout_animationDuration, DEFAULT_ANIMATION_DURATION)
+        animationDuration = typedArray.getInt(R.styleable.MultiTagFlowLayout_animationDuration, DEFAULT_ANIMATION_DURATION)
 
-        mHasMore = typedArray.getBoolean(R.styleable.TagFlowLayout_hasMore, false)
+        mHasMore = typedArray.getBoolean(R.styleable.MultiTagFlowLayout_hasMore, false)
 
-        mLayoutType=typedArray.getInt(R.styleable.TagFlowLayout_layout_type,0)
+        mLayoutType=typedArray.getInt(R.styleable.MultiTagFlowLayout_layout_type,0)
 
-        mLayoutManagerMode=typedArray.getInt(R.styleable.TagFlowLayout_layoutManager_Mode,0)
+        mLayoutManagerMode=typedArray.getInt(R.styleable.MultiTagFlowLayout_layoutManager_Mode,0)
 
-        foldHint = formatString(typedArray.getString(R.styleable.TagFlowLayout_foldHint),resources.getString(R.string.foldHint))
+        foldHint = formatString(typedArray.getString(R.styleable.MultiTagFlowLayout_foldHint),resources.getString(R.string.foldHint))
 
-        expandHint = formatString(typedArray.getString(R.styleable.TagFlowLayout_expandHint),resources.getString(R.string.expandHint))
+        expandHint = formatString(typedArray.getString(R.styleable.MultiTagFlowLayout_expandHint),resources.getString(R.string.expandHint))
 
         itemModel = ITEM_MODEL_CLICK
 
@@ -189,7 +191,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
-
         View.inflate(mContext, R.layout.tag_flow_layout, this)
         mControlScrollView = findViewById(R.id.hsv_tag_content)
         mIvArrowMore = findViewById(R.id.iv_arrow_more)
@@ -553,10 +554,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             super.onChanged()
             reloadData()
         }
-
-        override fun onInvalidated() {
-            super.onInvalidated()
-        }
     }
 
 
@@ -565,22 +562,19 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 实例化布局类型
      */
     private fun initLayoutType(){
+        if (mControlScrollView.childCount>0){
+            mControlScrollView.removeAllViews()
+        }
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{
-                mControlScrollView.removeAllViews()
                 mRecyclerView = RecyclerView(mContext)
                 mControlScrollView.addView(mRecyclerView)
             }
 
             LayoutTypeMode.FlowLayout.index->{
-                mControlScrollView.removeAllViews()
                 mFlowLayout = FlowLayout(mContext)
                 mControlScrollView.addView(mFlowLayout)
                 mFlowLayout.setSpace(tagsHorizontalSpace, tagsVerticalSpace)
-            }
-
-            else->{
-
             }
         }
     }
@@ -605,8 +599,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                         val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
                         if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
                             spacing = if(itemDecoration is GridLayoutItemDecoration){
-                                val gridLayoutItemDecoration: GridLayoutItemDecoration = itemDecoration
-                                gridLayoutItemDecoration.getSpaceHeight()
+                                itemDecoration.getSpaceHeight()
                             }else{
                                 0
                             }
