@@ -29,6 +29,8 @@ import com.framework.tagflow.utils.DensityUtils
 import com.framework.tagflow.view.ControlScrollView
 import com.framework.tagflow.view.FlowLayout
 import kotlin.math.ceil
+import androidx.core.view.isNotEmpty
+import androidx.core.content.withStyledAttributes
 
 /**
  * @author: xiaxueyi
@@ -146,27 +148,39 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     }
 
     init {
-        val typedArray: TypedArray = mContext.obtainStyledAttributes(attrs, R.styleable.MultiTagFlowLayout)
+        mContext.withStyledAttributes(attrs, R.styleable.MultiTagFlowLayout) {
+            tagsHorizontalSpace = getDimension(
+                R.styleable.MultiTagFlowLayout_tagsHorizontalSpace,
+                DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()
+            ).toInt()
 
-        tagsHorizontalSpace = typedArray.getDimension(R.styleable.MultiTagFlowLayout_tagsHorizontalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
+            tagsVerticalSpace = getDimension(
+                R.styleable.MultiTagFlowLayout_tagsVerticalSpace,
+                DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()
+            ).toInt()
 
-        tagsVerticalSpace = typedArray.getDimension(R.styleable.MultiTagFlowLayout_tagsVerticalSpace, DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()).toInt()
+            animationDuration =
+                getInt(R.styleable.MultiTagFlowLayout_animationDuration, DEFAULT_ANIMATION_DURATION)
 
-        animationDuration = typedArray.getInt(R.styleable.MultiTagFlowLayout_animationDuration, DEFAULT_ANIMATION_DURATION)
+            mHasMore = getBoolean(R.styleable.MultiTagFlowLayout_hasMore, false)
 
-        mHasMore = typedArray.getBoolean(R.styleable.MultiTagFlowLayout_hasMore, false)
+            mLayoutType = getInt(R.styleable.MultiTagFlowLayout_layout_type, 0)
 
-        mLayoutType=typedArray.getInt(R.styleable.MultiTagFlowLayout_layout_type,0)
+            mLayoutManagerMode = getInt(R.styleable.MultiTagFlowLayout_layoutManager_Mode, 0)
 
-        mLayoutManagerMode=typedArray.getInt(R.styleable.MultiTagFlowLayout_layoutManager_Mode,0)
+            foldHint = formatString(
+                getString(R.styleable.MultiTagFlowLayout_foldHint),
+                resources.getString(R.string.foldHint)
+            )
 
-        foldHint = formatString(typedArray.getString(R.styleable.MultiTagFlowLayout_foldHint),resources.getString(R.string.foldHint))
+            expandHint = formatString(
+                getString(R.styleable.MultiTagFlowLayout_expandHint),
+                resources.getString(R.string.expandHint)
+            )
 
-        expandHint = formatString(typedArray.getString(R.styleable.MultiTagFlowLayout_expandHint),resources.getString(R.string.expandHint))
+            itemModel = ITEM_MODEL_CLICK
 
-        itemModel = ITEM_MODEL_CLICK
-
-        typedArray.recycle()
+        }
 
         /**
          * 实例化组件
@@ -177,7 +191,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         /**
          * 实例化组件类型
          */
-        initLayoutType();
+        initLayoutType()
 
 
         /**
@@ -201,79 +215,70 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         mEmptyView=LayoutInflater.from(context).inflate(R.layout.layout_empty_not_data,this,false)
         mControlScrollView.isFillViewport=true
         this.isFillViewport=true
-        mRlShowMore.setOnClickListener(View.OnClickListener {
 
-            var maxLine:Double =0.0//最大行数
-
+        mRlShowMore.setOnClickListener {
+            var maxLine = 0.0//最大行数
             //真实数量
-            var realCount=0;
+            val realCount: Int
+            var finalLine = 0
+            val animateStart: Int  //记录动画开始位置
+            val animateEnd: Int  //记录动画结束位置
 
-            var finalLine:Int=0
-
-            var animateStart: Int=0 //记录动画开始位置
-
-            var animateEnd: Int=0 //记录动画结束位置
-
-            when(mLayoutType){
-                LayoutTypeMode.RecyclerView.index->{
-                    realCount= mRecyclerViewAdapter?.itemCount?:0 ;
-
-                    if(mRecyclerView.layoutManager is GridLayoutManager){
-                        val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
-                        if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
+            when (mLayoutType) {
+                LayoutTypeMode.RecyclerView.index -> {
+                    realCount = mRecyclerViewAdapter?.itemCount ?: 0;
+                    if (mRecyclerView.layoutManager is GridLayoutManager) {
+                        val gridLayoutManager: GridLayoutManager = mRecyclerView.layoutManager as GridLayoutManager
+                        if (gridLayoutManager.orientation == GridLayoutManager.VERTICAL) {
                             //计算列表中有多少行
-                            maxLine = (realCount.toDouble()/defaultColumn.toDouble()) //最大行数
+                            maxLine = (realCount.toDouble() / defaultColumn.toDouble()) //最大行数
                         }
-                    }else{
-                        maxLine=realCount.toDouble();
+                    } else {
+                        maxLine = realCount.toDouble();
                     }
                     //最终行数，向上取整,
-                    finalLine= ceil(maxLine).toInt()
+                    finalLine = ceil(maxLine).toInt()
                 }
 
-                LayoutTypeMode.FlowLayout.index->{
-                    realCount=mFlowLayout.getLineSize()
-                } else->{
-                realCount=0
-            }
+                LayoutTypeMode.FlowLayout.index -> {
+                    realCount = mFlowLayout.getLineSize()
+                }
+                else -> {
+                    realCount = 0
+                }
             }
 
             //展开容器
             if (!isFolded) {
                 ObjectAnimator.ofFloat(mIvArrowMore, "rotation", 0f, 180f).start()
 
-                if(mLayoutType== LayoutTypeMode.RecyclerView.index){
-                    animateStart=getLineHeight() * defaultRows
-                    animateEnd=getLineHeight() * finalLine
-                }else{
-                    animateStart=getLineHeight() * 3
-                    animateEnd=getLineHeight() * realCount
+                if (mLayoutType == LayoutTypeMode.RecyclerView.index) {
+                    animateStart = getLineHeight() * defaultRows
+                    animateEnd = getLineHeight() * finalLine
+                } else {
+                    animateStart = getLineHeight() * 3
+                    animateEnd = getLineHeight() * realCount
                 }
 
-
-                animate(animateStart,animateEnd )
-
+                animate(animateStart, animateEnd)
                 mTvMoreHint.text = foldHint //点击收回
                 mControlScrollView.setCanScroll(false)  //设置不可滑动
 
             } else {
                 ObjectAnimator.ofFloat(mIvArrowMore, "rotation", -180f, 0f).start()
-
-                if(mLayoutType== LayoutTypeMode.RecyclerView.index){
-                    animateStart=getLineHeight() * finalLine
-                    animateEnd=getLineHeight() * defaultRows
-                }else{
-                    animateStart=getLineHeight() * realCount
-                    animateEnd=getLineHeight() * 3
+                if (mLayoutType == LayoutTypeMode.RecyclerView.index) {
+                    animateStart = getLineHeight() * finalLine
+                    animateEnd = getLineHeight() * defaultRows
+                } else {
+                    animateStart = getLineHeight() * realCount
+                    animateEnd = getLineHeight() * 3
                 }
-
                 animate(animateStart, animateEnd)
-
                 mTvMoreHint.text = expandHint //点击展开
                 mControlScrollView.setCanScroll(false) //设置不可滑动
             }
             isFolded = !isFolded
-        })
+        }
 
     }
 
@@ -290,7 +295,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 if (start < 0) {
                     start = mRecyclerView.measuredHeight
                 }
-
                 if (end < 0) {
                     end = mRecyclerView.measuredHeight
                 }
@@ -303,10 +307,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 if (end < 0) {
                     end = mFlowLayout.measuredHeight
                 }
+            }
 
-            }else->{
-
-        }
+            else->{
+                start=0
+                end=0
+            }
         }
 
         val animator: ValueAnimator = ValueAnimator.ofInt(start, end)
@@ -328,12 +334,17 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     private fun reloadData() {
         val lines = when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
-                mRecyclerView.removeAllViews()
+                if (mRecyclerView.isNotEmpty()){
+                    mRecyclerView.removeAllViews()
+                }
+
                 mRecyclerViewAdapter?.itemCount ?: 0
             }
 
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
-                mFlowLayout.removeAllViews()
+                if (mFlowLayout.isNotEmpty()){
+                    mFlowLayout.removeAllViews()
+                }
                 mTagAdapter?.count ?: 0
             }
             else->{
@@ -347,7 +358,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             this.updateLayoutParams {
                 this.height = ViewGroup.LayoutParams.MATCH_PARENT
             }
-
             mControlScrollView.updateLayoutParams {
                 this.height = 0
             }
@@ -355,7 +365,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             /**
              * 增加空布局
              */
-            mEmptyViewContainer.removeAllViews()
+            if (mEmptyViewContainer.isNotEmpty()){
+                mEmptyViewContainer.removeAllViews()
+            }
             mEmptyViewContainer.addView(mEmptyView)
             mEmptyViewContainer.visibility = View.VISIBLE
             mRlShowMore.visibility = View.GONE
@@ -440,7 +452,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                         val view = mTagAdapter?.getView(i, convertView = null, mFlowLayout)
                         val position:Int=i
                         if (itemModel == ITEM_MODEL_CLICK && mOnTagClickListener != null) {
-
                             view?.setOnClickListener { v ->
                                 mOnTagClickListener?.onClick(v,position)
                             }
@@ -498,9 +509,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 })
             }
 
-            else->{
-
-            }
         }
     }
 
@@ -563,7 +571,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 实例化布局类型
      */
     private fun initLayoutType(){
-        if (mControlScrollView.childCount>0){
+        if (mControlScrollView.isNotEmpty()){
             mControlScrollView.removeAllViews()
         }
         when(mLayoutType){
@@ -586,9 +594,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * @return Int
      */
     private fun getLineHeight(): Int {
-        var itemHeight:Int= 0 //每一个item 的高度
-        var spaceHeight:Int=0; //间隔间距
-        var spacing: Int=0 //分割线高度，如果设置了分割线，计算item 的高度需要加上
+        var itemHeight= 0 //每一个item 的高度
+        var spaceHeight=0; //间隔间距
+        var spacing=0 //分割线高度，如果设置了分割线，计算item 的高度需要加上
 
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{
@@ -693,17 +701,13 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 刷新数据
      */
     fun notifyDataSetChanged(){
-        when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{
-                mRecyclerViewAdapter?.let {
-                    it.notifyItemRangeChanged(0, it.itemCount)
-                }
-
+        if (mLayoutType==LayoutTypeMode.RecyclerView.index){
+            mRecyclerViewAdapter?.let {
+                it.notifyItemRangeChanged(0, it.itemCount)
             }
-            LayoutTypeMode.FlowLayout.index->{
+        }else{
+            if (mLayoutType==LayoutTypeMode.FlowLayout.index){
                 mTagAdapter?.notifyDataSetChanged()
-            }
-            else->{
             }
         }
         //标识：刷新数据  isNotifyData=true
