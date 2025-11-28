@@ -3,16 +3,18 @@ package com.framework.tagflow.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.core.widget.NestedScrollView
 
 /**
  * 可控制滑动，可控制固定
  */
-class ControlScrollView(context: Context, attrs: AttributeSet) : NestedScrollView(context,attrs) {
+class ControlScrollView(context: Context, attrs: AttributeSet) : FrameLayout(context,attrs) {
     private var forceFixed = false//强制固定
 
-    private var canScroll = false
+    private var canScroll = true
 
 
     /**

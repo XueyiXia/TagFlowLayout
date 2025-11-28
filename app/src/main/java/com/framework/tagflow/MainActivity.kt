@@ -6,7 +6,6 @@ import android.widget.Toast
 import com.framework.tagflow.adapter.TestAdapter
 import com.framework.tagflow.adapter.TestGridAdapter
 import com.framework.tagflow.adapter.TestLinearAdapter
-import com.framework.tagflow.bean.BaseTagBean
 import com.framework.tagflow.bean.TestBean
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
@@ -16,20 +15,15 @@ import com.tagflow.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-
     private lateinit var mTestGridAdapter: TestGridAdapter
 
     private lateinit var mTestLinearAdapter: TestLinearAdapter
 
-    private val mGridSpace:Int=32; //九宫格分割线间隙
+
 
     private val mGridSpanCount=3;//九宫格每一行多少个
 
     override fun initView(rootView: View, savedInstanceState: Bundle?) {
-        mViewBinding.multiGridRecyclerTagTitle.text = "RecyclerView 演示(Grid)"
-        mViewBinding.multiLinearRecyclerTagTitle.text = "RecyclerView 演示(Linear)"
-        mViewBinding.multiFlowTagTitle.text="FlowLayout演示（自带布局）"
-        mViewBinding.multiFlowTagTitleSelf.text="FlowLayout演示（自定义布局）"
 
         initLinearAdapter()
 
@@ -39,6 +33,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         initTagFlowAdapterSelf()
 
+        initNoDataTagFlowAdapterSelf()
     }
 
 
@@ -72,17 +67,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
     private fun initGridAdapter(){
-        mViewBinding.multiGridRecyclerTag.getRecyclerView().addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
+        val mGridSpace: Int =resources.getDimension(R.dimen.dp_16).toInt()
+        mViewBinding.multiGridRecyclerTag.recyclerView.addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
         mTestGridAdapter= TestGridAdapter()
         for(index in 0..10){
             val bean= TestBean()
-            if (index==0){
-                bean.setTitle("Grid Test ")
-            }else if (index==2){
-                bean.setTitle("九宫格布局测试 Test")
-            }else{
-                bean.setTitle("Test")
-            }
+            bean.setTitle("九宫格布局测试 Test")
             bean.setId(index)
             mTestGridAdapter.addData(bean)
         }
@@ -120,15 +110,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewBinding.multiFlowTag.setItemModel(MultiTagFlowLayout.ITEM_MODEL_SELECT)
         mViewBinding.multiFlowTag.setSelectedListener(object :OnTagSelectedListener{
 
-            override fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
+            override fun selected(view: View?, position: Int, selected: List<Any?>?) {
 
                 Toast.makeText(this@MainActivity,"selected事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
 
-            override fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?) {
+            override fun unSelected(view: View?, position: Int, selected: List<Any?>?) {
                 Toast.makeText(this@MainActivity,"unSelected事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
+
+
+        mViewBinding.multiFlowTagSelf.addOnTagChildClickListener(com.tagflow.R.id.flFlagClose){ adapter, view, position ->
+
+            Toast.makeText(this@MainActivity,"点击了子tag view-->>:$position",Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
+
     }
 
 
@@ -151,6 +152,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 Toast.makeText(this@MainActivity,"长按事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
+
+    }
+
+
+
+    private fun initNoDataTagFlowAdapterSelf(){
+        val dataList:MutableList<TestBean> = mutableListOf()
+        val mTestAdapter=TestAdapter(this,false);
+        mTestAdapter.addAllList(dataList)
+        mViewBinding.multiFlowDataTitle.setAdapter(mTestAdapter)
 
     }
 }

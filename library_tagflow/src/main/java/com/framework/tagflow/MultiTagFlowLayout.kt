@@ -3,20 +3,21 @@ package com.framework.tagflow
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.content.res.TypedArray
 import android.database.DataSetObserver
 import android.util.AttributeSet
+import android.util.Log
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.*
+import androidx.annotation.IdRes
 import androidx.annotation.IntDef
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.framework.tagflow.adapter.BaseTagAdapter
@@ -31,6 +32,13 @@ import com.framework.tagflow.view.FlowLayout
 import kotlin.math.ceil
 import androidx.core.view.isNotEmpty
 import androidx.core.content.withStyledAttributes
+import androidx.core.util.isNotEmpty
+import androidx.core.util.size
+import androidx.core.view.isGone
+import com.framework.tagflow.databinding.TagFlowLayoutBinding
+import kotlin.compareTo
+import kotlin.text.clear
+import kotlin.text.toFloat
 
 /**
  * @author: xiaxueyi
@@ -40,23 +48,23 @@ import androidx.core.content.withStyledAttributes
  */
 
 open class MultiTagFlowLayout @JvmOverloads constructor(
-    private val mContext: Context,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : NestedScrollView(mContext, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     companion object {
-
         //默认标签之间的间距
         private const val DEFAULT_TAGS_SPACE = 8f
-
         //默认展开动画执行时间(毫秒)
         private const val DEFAULT_ANIMATION_DURATION = 400
-
         const val ITEM_MODEL_CLICK = 100000
-
         const val ITEM_MODEL_SELECT = 100001
-
+        private const val LAYOUT_TYPE_DEFAULT = 0
+        private const val LAYOUT_MANAGER_MODE_DEFAULT = 0
+        private const val DEFAULT_ROWS = 3
+        private const val DEFAULT_COLUMN = 3
+        private const val MAX_FLOW_LAYOUT_LINES = 6
     }
 
     private lateinit var mControlScrollView: ControlScrollView     //标签容器
@@ -74,9 +82,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     //false:展开了
     private var isFolded = false
 
-    private var foldHint = ""    //展开后显示的提示文字
+    private var foldHint = resources.getString(R.string.foldHint)   //展开后显示的提示文字
 
-    private var expandHint = ""   //折叠起来后显示的提示文字
+    private var expandHint =resources.getString(R.string.expandHint)   //折叠起来后显示的提示文字
 
     private var animationDuration = 0    //展开和折叠动画持续时间
 
@@ -85,8 +93,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     private var mRecyclerViewAdapterDataSetObserver: RecyclerViewAdapterDataSetObserver? = null
 
     private var mRecyclerViewAdapter: RecyclerView.Adapter<*>? = null
-
-    private lateinit var mRecyclerView: NonTouchableRecyclerView
 
     private var defaultRows:Int=3 //默认行数三行
 
@@ -110,9 +116,17 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
     private var mAdapterDataSetObserver: AdapterDataSetObserver? = null //FlowLayout 适配器监听
 
-    private var mTagAdapter: BaseTagAdapter<*>? = null //FlowLayout 适配器
+    private var mBaseTagAdapter: BaseTagAdapter<*>? = null //FlowLayout 适配器
+    
+    private val mRecyclerView: NonTouchableRecyclerView by lazy { NonTouchableRecyclerView(context) }
 
-    private lateinit var mFlowLayout: FlowLayout
+    private val mBinding = TagFlowLayoutBinding.inflate(LayoutInflater.from(context), this)
+
+    private val mFlowLayout: FlowLayout by lazy {
+        FlowLayout(context).apply {
+            setSpace(tagsHorizontalSpace, tagsVerticalSpace)
+        }
+    }
 
     private var tagsHorizontalSpace = 0     //标签之间的横向间距
 
@@ -120,11 +134,14 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
     private var mLayoutManagerMode:Int=0
 
-    private lateinit var mEmptyView:View;
+    private val mEmptyView:View by lazy{LayoutInflater.from(context).inflate(R.layout.layout_empty_not_data,null)}
 
+    /**
+     * 用于保存需要设置点击事件的 tag item
+     */
+    private var mOnTagChildClickArray: SparseArray<OnTagChildClickListener<BaseTagAdapter<*>>>? = null
 
-
-
+    private val defaultTagsSpacePx = DensityUtils.dp2px(context, DEFAULT_TAGS_SPACE)
 
     /**
      * 列表布局只支持垂直列表模式
@@ -147,16 +164,37 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         FlowLayout(1),
     }
 
+
+
+    /**
+     * Linear layout manager
+     */
+    private val linearLayoutManager: LinearLayoutManager by lazy {
+        LinearLayoutManager(context).apply {
+            orientation = LinearLayoutManager.VERTICAL
+        }
+    }
+
+    /**
+     * Grid layout manager
+     */
+    private val gridLayoutManager: GridLayoutManager by lazy {
+        GridLayoutManager(context, 3).apply {
+            orientation = GridLayoutManager.VERTICAL
+        }
+    }
+
+
     init {
-        mContext.withStyledAttributes(attrs, R.styleable.MultiTagFlowLayout) {
+        context.withStyledAttributes(attrs, R.styleable.MultiTagFlowLayout) {
             tagsHorizontalSpace = getDimension(
                 R.styleable.MultiTagFlowLayout_tagsHorizontalSpace,
-                DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()
+                defaultTagsSpacePx.toFloat()
             ).toInt()
 
             tagsVerticalSpace = getDimension(
                 R.styleable.MultiTagFlowLayout_tagsVerticalSpace,
-                DensityUtils.dp2px(mContext, DEFAULT_TAGS_SPACE).toFloat()
+                defaultTagsSpacePx.toFloat()
             ).toInt()
 
             animationDuration =
@@ -164,18 +202,18 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
             mHasMore = getBoolean(R.styleable.MultiTagFlowLayout_hasMore, false)
 
-            mLayoutType = getInt(R.styleable.MultiTagFlowLayout_layout_type, 0)
+            mLayoutType = getInt(R.styleable.MultiTagFlowLayout_layout_type, LAYOUT_TYPE_DEFAULT)
 
-            mLayoutManagerMode = getInt(R.styleable.MultiTagFlowLayout_layoutManager_Mode, 0)
+            mLayoutManagerMode = getInt(R.styleable.MultiTagFlowLayout_layoutManager_Mode, LAYOUT_MANAGER_MODE_DEFAULT)
 
             foldHint = formatString(
                 getString(R.styleable.MultiTagFlowLayout_foldHint),
-                resources.getString(R.string.foldHint)
+                foldHint
             )
 
             expandHint = formatString(
                 getString(R.styleable.MultiTagFlowLayout_expandHint),
-                resources.getString(R.string.expandHint)
+                expandHint
             )
 
             itemModel = ITEM_MODEL_CLICK
@@ -195,7 +233,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
 
         /**
-         *
+         * 初始化列表的布局管理模式
          */
         initLayoutManage()
 
@@ -206,78 +244,41 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
-        View.inflate(mContext, R.layout.tag_flow_layout, this)
+        inflate(context, R.layout.tag_flow_layout, this)
         mControlScrollView = findViewById(R.id.hsv_tag_content)
         mIvArrowMore = findViewById(R.id.iv_arrow_more)
         mTvMoreHint = findViewById(R.id.tv_more_hint)
         mRlShowMore = findViewById(R.id.rl_show_more)
         mEmptyViewContainer= findViewById(R.id.fl_empty)
-        mEmptyView=LayoutInflater.from(context).inflate(R.layout.layout_empty_not_data,this,false)
-        mControlScrollView.isFillViewport=true
-        this.isFillViewport=true
+
 
         mRlShowMore.setOnClickListener {
-            var maxLine = 0.0//最大行数
             //真实数量
-            val realCount: Int
+            var realCount =0
             var finalLine = 0
-            val animateStart: Int  //记录动画开始位置
-            val animateEnd: Int  //记录动画结束位置
-
             when (mLayoutType) {
                 LayoutTypeMode.RecyclerView.index -> {
-                    realCount = mRecyclerViewAdapter?.itemCount ?: 0;
-                    if (mRecyclerView.layoutManager is GridLayoutManager) {
-                        val gridLayoutManager: GridLayoutManager = mRecyclerView.layoutManager as GridLayoutManager
-                        if (gridLayoutManager.orientation == GridLayoutManager.VERTICAL) {
-                            //计算列表中有多少行
-                            maxLine = (realCount.toDouble() / defaultColumn.toDouble()) //最大行数
+                    val realCount = mRecyclerViewAdapter?.itemCount ?: 0
+                    val maxLine = when (val layoutManager = mRecyclerView.layoutManager) {
+                        is GridLayoutManager -> {
+                            if (layoutManager.orientation == GridLayoutManager.VERTICAL) {
+                                realCount.toDouble() / defaultColumn.toDouble() // 最大行数
+                            } else {
+                                realCount.toDouble()
+                            }
                         }
-                    } else {
-                        maxLine = realCount.toDouble();
+                        else -> realCount.toDouble()
                     }
-                    //最终行数，向上取整,
-                    finalLine = ceil(maxLine).toInt()
+                    finalLine = ceil(maxLine).toInt() // 最终行数，向上取整
                 }
 
                 LayoutTypeMode.FlowLayout.index -> {
-                    realCount = mFlowLayout.getLineSize()
-                }
-                else -> {
-                    realCount = 0
+                    realCount = minOf(mFlowLayout.getLineSize(), MAX_FLOW_LAYOUT_LINES)
                 }
             }
 
-            //展开容器
-            if (!isFolded) {
-                ObjectAnimator.ofFloat(mIvArrowMore, "rotation", 0f, 180f).start()
-
-                if (mLayoutType == LayoutTypeMode.RecyclerView.index) {
-                    animateStart = getLineHeight() * defaultRows
-                    animateEnd = getLineHeight() * finalLine
-                } else {
-                    animateStart = getLineHeight() * 3
-                    animateEnd = getLineHeight() * realCount
-                }
-
-                animate(animateStart, animateEnd)
-                mTvMoreHint.text = foldHint //点击收回
-                mControlScrollView.setCanScroll(false)  //设置不可滑动
-
-            } else {
-                ObjectAnimator.ofFloat(mIvArrowMore, "rotation", -180f, 0f).start()
-                if (mLayoutType == LayoutTypeMode.RecyclerView.index) {
-                    animateStart = getLineHeight() * finalLine
-                    animateEnd = getLineHeight() * defaultRows
-                } else {
-                    animateStart = getLineHeight() * realCount
-                    animateEnd = getLineHeight() * 3
-                }
-                animate(animateStart, animateEnd)
-                mTvMoreHint.text = expandHint //点击展开
-                mControlScrollView.setCanScroll(false) //设置不可滑动
-            }
-            isFolded = !isFolded
+            // 展开/收起动画
+            toggleExpand(finalLine, realCount)
         }
 
     }
@@ -328,117 +329,93 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     }
 
 
+
+    /**
+     * Toggle expand
+     * 展开/收起动画的通用逻辑
+     * @param finalLine 最终行数
+     * @param realCount 真实数量
+     */
+    private fun toggleExpand(finalLine: Int, realCount: Int) {
+        val animateStart: Int
+        val animateEnd: Int
+        val isRecyclerView = mLayoutType == LayoutTypeMode.RecyclerView.index
+        if (!isFolded) { // 展开
+            animateStart = if (isRecyclerView) {
+                getLineHeight() * defaultRows
+            } else {
+                getLineHeight() * 3
+            }
+            animateEnd = if (isRecyclerView) {
+                getLineHeight() * finalLine
+            } else {
+                getLineHeight() * realCount
+            }
+        } else { // 收起
+            animateStart = if (isRecyclerView) {
+                getLineHeight() * finalLine
+            } else {
+                getLineHeight() * realCount
+            }
+            animateEnd = if (isRecyclerView) {
+                getLineHeight() * defaultRows
+            } else {
+                getLineHeight() * 3
+            }
+        }
+
+        val rotationStart = if (isFolded) {
+            -180f
+        } else {
+            0f
+        }
+        val rotationEnd = if (isFolded) {
+            0f
+        } else {
+            180f
+        }
+        ObjectAnimator.ofFloat(mIvArrowMore, "rotation", rotationStart, rotationEnd).start()
+        animate(animateStart, animateEnd)
+        mTvMoreHint.text = if (isFolded) {
+            expandHint
+        } else {
+            foldHint
+        }
+        mControlScrollView.setCanScroll(false)
+        isFolded = !isFolded
+    }
+
     /**
      * 重新设置数据
      */
     private fun reloadData() {
-        val lines = when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{ //RecyclerView
-                if (mRecyclerView.isNotEmpty()){
-                    mRecyclerView.removeAllViews()
-                }
-
+        val itemCount = when (mLayoutType) {
+            LayoutTypeMode.RecyclerView.index -> {
                 mRecyclerViewAdapter?.itemCount ?: 0
             }
-
-            LayoutTypeMode.FlowLayout.index->{ //FlowLayout
-                if (mFlowLayout.isNotEmpty()){
-                    mFlowLayout.removeAllViews()
-                }
-                mTagAdapter?.count ?: 0
+            LayoutTypeMode.FlowLayout.index -> {
+                mBaseTagAdapter?.count ?: 0
             }
-            else->{
-                0
-            }
+            else -> 0
         }
+
         /**
          * 如果行数为0，重新渲染布局
          */
-        if (lines == 0) {
-            this.updateLayoutParams {
-                this.height = ViewGroup.LayoutParams.MATCH_PARENT
-            }
-            mControlScrollView.updateLayoutParams {
-                this.height = 0
-            }
-
-            /**
-             * 增加空布局
-             */
-            if (mEmptyViewContainer.isNotEmpty()){
-                mEmptyViewContainer.removeAllViews()
-            }
-            mEmptyViewContainer.addView(mEmptyView)
-            mEmptyViewContainer.visibility = View.VISIBLE
-            mRlShowMore.visibility = View.GONE
+        if (itemCount == 0) {
+            updateLayoutForEmptyData()
             return
         }
-        val childCount:Int= mEmptyViewContainer.childCount
-        if(childCount>0){
-            mEmptyViewContainer.removeAllViews()
-            mEmptyViewContainer.visibility= GONE
-        }
+        
+
 
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
                 mRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
-                        val itemCount:Int= mRecyclerViewAdapter?.itemCount?:0
-                        val realCount:Int= mRecyclerViewAdapter?.itemCount?:0 ;
-                        var maxLine =0.0//最大行数
-                        if(mRecyclerView.layoutManager is GridLayoutManager){
-                            val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
-                            if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
-                                //计算列表中有多少行
-                                maxLine = (realCount.toDouble()/defaultColumn.toDouble()) //最大行数
-                            }
-                        }else{
-                            maxLine=realCount.toDouble();
-                        }
-                        //最终行数，向上取整,
-                        val finalLine= ceil(maxLine).toInt()
-
-                        if (mHasMore) { //有展开更多的布局
-                            var controlScrollViewHeight=0
-                            if(isNotifyData){
-                                if (finalLine <= 3) {
-                                    controlScrollViewHeight = getLineHeight() * finalLine
-                                    mRlShowMore.visibility = View.GONE
-                                }else{
-                                    mRlShowMore.visibility = View.VISIBLE
-                                    //表示已经展开了
-                                    controlScrollViewHeight = if (isFolded){
-                                        getLineHeight() * finalLine
-                                    }else{
-                                        //设置默认展开高度(一个item 高度*多少行)
-                                        getLineHeight()* defaultRows
-                                    }
-                                }
-
-                                mControlScrollView.updateLayoutParams {
-                                    this.height = controlScrollViewHeight
-                                }
-                            }else{
-                                if (finalLine <= 3) {
-                                    controlScrollViewHeight = getLineHeight() * finalLine
-                                    mRlShowMore.visibility = View.GONE
-                                } else {
-                                    //设置默认展开高度(一个item 高度*多少行)
-                                    controlScrollViewHeight = getLineHeight()* defaultRows
-                                    mRlShowMore.visibility = View.VISIBLE
-                                }
-
-                                mControlScrollView.updateLayoutParams {
-                                    this.height = controlScrollViewHeight
-                                }
-                            }
-
-                        } else { //没有展开更多的布局
-                            mRlShowMore.visibility = View.GONE
-                            mControlScrollView.updateLayoutParams {
-                                this.height = getLineHeight() * itemCount
-                            }
+                        mControlScrollView.updateLayoutParams {
+                            this.height = calculateControlScrollViewHeight(itemCount) //计算 ControlScrollView 的高度
                         }
                         mRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
@@ -446,69 +423,39 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             }
 
             LayoutTypeMode.FlowLayout.index->{ //FlowLayout
-                mFlowLayout.clearAllView()
-                mTagAdapter?.let {
-                    for (i in 0 until it.count) {
-                        val view = mTagAdapter?.getView(i, convertView = null, mFlowLayout)
-                        val position:Int=i
-                        if (itemModel == ITEM_MODEL_CLICK && mOnTagClickListener != null) {
-                            view?.setOnClickListener { v ->
-                                mOnTagClickListener?.onClick(v,position)
-                            }
 
-                            view?.setOnLongClickListener { v ->
-                                mOnTagClickListener?.onLongClick(v, position)
-                                true
-                            }
-
-                        } else if (itemModel ==ITEM_MODEL_SELECT && mSelectedListener != null) {
-                            view?.setOnClickListener { v ->
-                                if (v is MutSelectedTagView) {
-                                    if (!v.isSelected) {
-                                        mTagAdapter?.select(position)
-                                        mSelectedListener?.selected(v, position, mTagAdapter?.getData() as List<BaseTagBean?>)
-                                    } else {
-                                        mTagAdapter?.unSelect(position)
-                                        mSelectedListener?.unSelected(v, position, mTagAdapter?.getData() as List<BaseTagBean?>)
-                                    }
-                                    v.toggle()
-                                }
-                            }
-                        }
-
-                        mFlowLayout.addView(view)
-                    }
-                }
-
+                /**
+                 * 绑定点击事件
+                 */
+                bindViewClickListener()
 
                 mFlowLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
-                        if (mHasMore) { //有展开更多的布局
-                            var controlScrollViewHeight=0
-                            if (lines <= 3) {
-                                controlScrollViewHeight = getLineHeight() * lines
-                                mRlShowMore.visibility = View.GONE
+                        val flowLayoutLines = mFlowLayout.getLineSize()
+                        val controlScrollViewHeight = if (mHasMore) { // 有展开更多的布局
+                            if (mRlShowMore.isGone){
+                                mRlShowMore.visibility = VISIBLE
+                                mRlShowMore.isClickable = true
+                            }
+                            if (flowLayoutLines <= DEFAULT_ROWS) {
+                                getLineHeight()  * flowLayoutLines
                             } else {
-                                controlScrollViewHeight = getLineHeight() * 3
-                                mRlShowMore.visibility = View.VISIBLE
+                                getLineHeight() * DEFAULT_ROWS
                             }
-
-                            mControlScrollView.updateLayoutParams {
-                                this.height=controlScrollViewHeight
-                            }
-
-                        } else { //没有展开更多的布局
+                        } else { // 没有展开更多的布局
                             mRlShowMore.visibility = View.GONE
-                            mControlScrollView.updateLayoutParams {
-                                this.height=getLineHeight() * lines
-                            }
+                            mRlShowMore.isClickable = false // 避免点击事件
+                            getLineHeight() * flowLayoutLines
+                        }
+
+                        mControlScrollView.updateLayoutParams {
+                            this.height=controlScrollViewHeight
                         }
                         mFlowLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
                 })
             }
-
         }
     }
 
@@ -520,23 +467,20 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         if(mLayoutType== LayoutTypeMode.RecyclerView.index){
             when(mLayoutManagerMode){
                 LayoutManagerMode.LinearLayoutManager.index->{
-                    val linearLayoutManager = LinearLayoutManager(context)
-                    linearLayoutManager.orientation= LinearLayoutManager.VERTICAL
-                    mRecyclerView.setHasFixedSize(true)
-                    mRecyclerView.layoutManager =linearLayoutManager;
-                    mRecyclerView.itemAnimator = DefaultItemAnimator()
+                    mRecyclerView.apply {
+                        setHasFixedSize(true)
+                        layoutManager = linearLayoutManager
+                        (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+                        itemAnimator = null // 或者直接设置成 null
+                    }
                 }
-
 
                 LayoutManagerMode.GridLayoutManager.index->{
-                    val gridLayoutManager = GridLayoutManager(context,3)
-                    gridLayoutManager.orientation= GridLayoutManager.VERTICAL
-                    mRecyclerView.setHasFixedSize(true)
-                    mRecyclerView.layoutManager =gridLayoutManager;
-                    mRecyclerView.itemAnimator = DefaultItemAnimator()
-                }
-                else->{
-
+                    mRecyclerView.apply {
+                        setHasFixedSize(true)
+                        layoutManager = gridLayoutManager
+                        (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+                    }
                 }
             }
         }
@@ -570,20 +514,17 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     /**
      * 实例化布局类型
      */
-    private fun initLayoutType(){
-        if (mControlScrollView.isNotEmpty()){
+    private fun initLayoutType() {
+        if (mControlScrollView.isNotEmpty()) {
             mControlScrollView.removeAllViews()
         }
-        when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{
-                mRecyclerView = NonTouchableRecyclerView(mContext)
+        when (mLayoutType) {
+            LayoutTypeMode.RecyclerView.index -> {
                 mControlScrollView.addView(mRecyclerView)
             }
 
-            LayoutTypeMode.FlowLayout.index->{
-                mFlowLayout = FlowLayout(mContext)
+            LayoutTypeMode.FlowLayout.index -> {
                 mControlScrollView.addView(mFlowLayout)
-                mFlowLayout.setSpace(tagsHorizontalSpace, tagsVerticalSpace)
             }
         }
     }
@@ -594,85 +535,124 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * @return Int
      */
     private fun getLineHeight(): Int {
-        var itemHeight= 0 //每一个item 的高度
-        var spaceHeight=0; //间隔间距
-        var spacing=0 //分割线高度，如果设置了分割线，计算item 的高度需要加上
+        var itemHeight = 0
+        var spaceHeight:Int=0; //间隔间距
+        var spacing: Int=0 //分割线高度，如果设置了分割线，计算item 的高度需要加上
+        when (mLayoutType) {
+            LayoutTypeMode.RecyclerView.index -> {
+                val layoutManager = mRecyclerView.layoutManager ?: return 0
+                val childView = mRecyclerView.getChildAt(0) ?: return 0
 
-        when(mLayoutType){
-            LayoutTypeMode.RecyclerView.index->{
-                val childView=mRecyclerView.getChildAt(0)
-                val itemDecorationCount:Int=mRecyclerView.itemDecorationCount
-                if(itemDecorationCount>0){
-                    if(mRecyclerView.layoutManager is GridLayoutManager){
-                        val itemDecoration:ItemDecoration=mRecyclerView.getItemDecorationAt(0)
-                        val gridLayoutManager:GridLayoutManager= mRecyclerView.layoutManager as GridLayoutManager
-                        if(gridLayoutManager.orientation==GridLayoutManager.VERTICAL){
-                            spacing = if(itemDecoration is GridLayoutItemDecoration){
+                // 安全获取分割线高度
+                if (mRecyclerView.itemDecorationCount > 0) {
+                    when (layoutManager) {
+                        is GridLayoutManager -> {
+                            val itemDecoration = mRecyclerView.getItemDecorationAt(0)
+                            spacing = if (layoutManager.orientation == GridLayoutManager.VERTICAL && itemDecoration is GridLayoutItemDecoration) {
                                 itemDecoration.getSpaceHeight()
                             }else{
                                 0
                             }
                         }
+
+                        is LinearLayoutManager -> {
+                            if (layoutManager.orientation == LinearLayoutManager.VERTICAL) {
+                                spacing = 1
+                            }
+                        }
                     }
                 }
 
-                if(childView!=null){
-                    //子view 的高度
-                    itemHeight=childView.measuredHeight
-                    //获取设置子view 内外间距的尺寸
-                    spaceHeight=childView.marginTop+childView.marginBottom
-                    //计算整个item 的高度
-                    itemHeight=(itemHeight+spaceHeight+spacing)
-
-                }
+                //子view 的高度
+                itemHeight= if (childView.height > 0) childView.height else childView.measuredHeight
+                //获取设置子view 内外间距的尺寸
+                spaceHeight=childView.marginTop+childView.marginBottom
+                //计算整个item 的高度
+                itemHeight=(itemHeight+spaceHeight+spacing)
             }
 
-            LayoutTypeMode.FlowLayout.index->{
-                itemHeight= mFlowLayout.getLineHeight() + tagsVerticalSpace
+            LayoutTypeMode.FlowLayout.index -> {
+                itemHeight = mFlowLayout.getLineHeight() + tagsVerticalSpace
             }
 
-            else->{
-                itemHeight=0
-            }
+            else -> itemHeight = 0
         }
-
 
         return itemHeight
     }
+
+
 
     /**
      *
      * @param adapter Any
      */
     fun setAdapter(adapter:Any){
-        if (mLayoutType==LayoutTypeMode.RecyclerView.index){
-            if(adapter is RecyclerView.Adapter<*>){
+        when (adapter) {
+            is RecyclerView.Adapter<*> -> {
+                // 取消注册旧的观察者
+                mRecyclerViewAdapterDataSetObserver?.let { mRecyclerViewAdapter?.unregisterAdapterDataObserver(it) }
                 this.mRecyclerViewAdapter = adapter
-                mRecyclerView.adapter=mRecyclerViewAdapter
-
-                mRecyclerViewAdapter?.let { recyclerViewAdapter->
-                    if (mRecyclerViewAdapterDataSetObserver != null) {
-                        recyclerViewAdapter.unregisterAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
-                    }
+                mRecyclerView.adapter = mRecyclerViewAdapter
+                mRecyclerViewAdapter?.let { recyclerViewAdapter ->
                     mRecyclerViewAdapterDataSetObserver = RecyclerViewAdapterDataSetObserver()
                     recyclerViewAdapter.registerAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
                     reloadData()
                 }
             }
-
-        }else{
-
-            if(adapter is BaseTagAdapter<*>){
-                this.mTagAdapter = adapter
-                mTagAdapter?.let { tagAdapterIt->
-                    if (mAdapterDataSetObserver != null) {
-                        tagAdapterIt.unregisterDataSetObserver(mAdapterDataSetObserver)
-                    }
+            is BaseTagAdapter<*> -> {
+                // 取消注册旧的观察者
+                mAdapterDataSetObserver?.let { mBaseTagAdapter?.unregisterDataSetObserver(it) }
+                this.mBaseTagAdapter = adapter
+                mBaseTagAdapter?.let { tagAdapterIt ->
                     mAdapterDataSetObserver = AdapterDataSetObserver()
                     tagAdapterIt.registerDataSetObserver(mAdapterDataSetObserver)
                     reloadData()
                 }
             }
+            else -> {
+                // 处理不支持的 Adapter 类型
+                Log.w("setAdapter", "adapter type: ${adapter.javaClass.name}")
+            }
+        }
+    }
+
+
+    /**
+     * 回收对象数据，防止oom
+     * Gc data
+     *
+     */
+    private fun gcData(){
+        if (mOnTagChildClickArray?.isNotEmpty() == true){
+            mOnTagChildClickArray?.clear()
+        }
+
+        mRecyclerViewAdapterDataSetObserver?.let {
+            mRecyclerViewAdapter?.unregisterAdapterDataObserver(it)
+        }
+
+        mBaseTagAdapter?.let {
+            if (mAdapterDataSetObserver != null) {
+                it.unregisterDataSetObserver(mAdapterDataSetObserver)
+            }
+            it.getData().toMutableList().clear()
+        }
+
+        linearLayoutManager.removeAllViews()
+        gridLayoutManager.removeAllViews()
+
+
+        if (mFlowLayout.isNotEmpty()) {
+            mFlowLayout.clearAllView()
+        }
+
+        if (mRecyclerView.isNotEmpty()) {
+            mRecyclerView.removeAllViews()
+        }
+
+        if (this.isNotEmpty()){
+            this.removeAllViews()
         }
     }
 
@@ -680,17 +660,15 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     /**
      * 获取适配器
      */
-    private fun getAdapter():Any? {
-        return if (mLayoutType==LayoutTypeMode.RecyclerView.index){
-            if(mRecyclerViewAdapter is RecyclerView.Adapter<*>){
-                mRecyclerViewAdapter as RecyclerView.Adapter<*>
-            } else {
-                null
+    fun getAdapter():Any? {
+        return when (mLayoutType) {
+            LayoutTypeMode.RecyclerView.index -> {
+                mRecyclerViewAdapter
             }
-        }else{
-            if(mTagAdapter is BaseTagAdapter<*>){
-                mTagAdapter
-            } else {
+            LayoutTypeMode.FlowLayout.index->{
+                mBaseTagAdapter
+            }
+            else -> {
                 null
             }
         }
@@ -701,35 +679,168 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 刷新数据
      */
     fun notifyDataSetChanged(){
-        if (mLayoutType==LayoutTypeMode.RecyclerView.index){
-            mRecyclerViewAdapter?.let {
-                it.notifyItemRangeChanged(0, it.itemCount)
+        when (mLayoutType) {
+            LayoutTypeMode.RecyclerView.index -> {
+                mRecyclerViewAdapter?.let { adapter ->
+                    // 当itemCount大于0时才刷新
+                    if (adapter.itemCount > 0) {
+                        adapter.notifyItemRangeChanged(0, adapter.itemCount)
+                    }
+                }
             }
-        }else{
-            if (mLayoutType==LayoutTypeMode.FlowLayout.index){
-                mTagAdapter?.notifyDataSetChanged()
+
+            LayoutTypeMode.FlowLayout.index -> {
+                mBaseTagAdapter?.notifyDataSetChanged()
             }
         }
         //标识：刷新数据  isNotifyData=true
         isNotifyData=true
     }
 
-
     /**
-     * 获取列表对象
-     * @return RecyclerView
+     * 绑定 item tag 点击事件
+     * Bind view click listener
      */
-    fun getRecyclerView():RecyclerView{
-        return mRecyclerView
+    protected open fun bindViewClickListener(){
+        val isFlowLayoutEmpty = mFlowLayout.isNotEmpty()
+        if (isFlowLayoutEmpty) {
+            mFlowLayout.removeAllViews()
+        }
+        mBaseTagAdapter?.let { tagAdapterIt->
+            for (i in 0 until tagAdapterIt.count) {
+                val itemView = tagAdapterIt.getView(i, convertView = null, mFlowLayout)
+                val position:Int=i
+                if (itemModel == ITEM_MODEL_CLICK && mOnTagClickListener != null) {
+                    itemView.setOnClickListener { v ->
+                        mOnTagClickListener?.onClick(v,position)
+                    }
+
+                    itemView.setOnLongClickListener { v ->
+                        mOnTagClickListener?.onLongClick(v, position)
+                        true
+                    }
+
+                }else if (itemModel == ITEM_MODEL_SELECT && mSelectedListener != null) {
+
+                    itemView.setOnClickListener { v ->
+                        if (v is MutSelectedTagView) {
+                            if (!v.isSelected) {
+                                tagAdapterIt.select(position)
+                                mSelectedListener?.selected(v, position, tagAdapterIt.getData())
+                            } else {
+                                tagAdapterIt.unSelect(position)
+                                mSelectedListener?.unSelected(v, position, tagAdapterIt.getData())
+                            }
+                            v.toggle()
+                        }
+                    }
+                }
+
+                /**
+                 * tag 子view 点击事件
+                 */
+                mOnTagChildClickArray?.let {
+
+                    for (i in 0 until it.size) {
+                        val id = it.keyAt(i)
+                        itemView.findViewById<View>(id)?.let { childView ->
+                            childView.setOnClickListener { v ->
+                                onItemChildClick(v, position)
+                            }
+                        }
+                    }
+                }
+                mFlowLayout.addView(itemView)
+            }
+        }
     }
 
+
     /**
-     * 获取流逝布局对象
-     * @return FlowLayout
+     * 更新空布局宽高
+     * Update layout for empty data
+     *
      */
-    fun getFlowLayout(): FlowLayout {
-        return mFlowLayout
+    private fun updateLayoutForEmptyData() {
+        mControlScrollView.updateLayoutParams {
+            this.height = 0
+        }
+        val childCount:Int= mEmptyViewContainer.childCount
+        if(childCount>0){
+            mEmptyViewContainer.removeAllViews()
+        }
+        mEmptyViewContainer.addView(mEmptyView)
+        mEmptyViewContainer.visibility= VISIBLE
+        mRlShowMore.visibility = INVISIBLE
+        mRlShowMore.isClickable = false
     }
+
+
+
+    /**
+     * 计算行高
+     * Calculate control scroll view height
+     *
+     * @param itemCount
+     */
+    private fun calculateControlScrollViewHeight(itemCount: Int): Int {
+        val maxLine = if (mRecyclerView.layoutManager is GridLayoutManager) {
+            val gridLayoutManager = mRecyclerView.layoutManager as GridLayoutManager
+            if (gridLayoutManager.orientation == GridLayoutManager.VERTICAL) {
+                itemCount.toDouble() / defaultColumn.toDouble()
+            } else {
+                itemCount.toDouble()
+            }
+        } else {
+            itemCount.toDouble()
+        }
+        val finalLine = ceil(maxLine).toInt()
+        val controlScrollViewHeight= if (mHasMore) { // 有展开更多的布局
+            if (isNotifyData) {
+                if (finalLine <= 3) {
+                    mRlShowMore.visibility = GONE
+                    getLineHeight() * finalLine
+                } else {
+                    mRlShowMore.visibility = VISIBLE
+                    if (isFolded) {
+                        getLineHeight() * finalLine
+                    } else {
+                        getLineHeight() * defaultRows
+                    }
+                }
+            } else {
+                if (finalLine <= 3) {
+                    mRlShowMore.visibility = GONE
+                    getLineHeight() * finalLine
+                } else {
+                    mRlShowMore.visibility = VISIBLE
+                    getLineHeight() * defaultRows
+                }
+            }
+        } else { // 没有展开更多的布局
+            mRlShowMore.visibility = GONE
+            getLineHeight() * itemCount // 使用之前获取的 itemCount
+        }
+
+        return controlScrollViewHeight
+    }
+
+
+
+    /**
+     * 使用 get() 函数获取 RecyclerView 实例
+     * Recycler view
+     */
+    val recyclerView: NonTouchableRecyclerView
+        get() = mRecyclerView
+
+
+    /**
+     * 使用 get() 函数获取 FlowLayout 实例
+     * Flow layout
+     */
+    val flowLayout: FlowLayout
+        get() = mFlowLayout
 
 
     /**
@@ -873,12 +984,18 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         }
     }
 
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        gcData()
+    }
+
     /******************************************************* set listener *********************************************************************/
 
 
     fun setOnTagClickListener(onTagClickListener: OnTagClickListener)=apply {
         this.mOnTagClickListener=onTagClickListener
-        if (mTagAdapter != null) {
+        if (mBaseTagAdapter != null) {
             reloadData()
         }
     }
@@ -886,8 +1003,42 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
     open fun setSelectedListener(selectedListener: OnTagSelectedListener?) {
         this.mSelectedListener = selectedListener
-        if (mTagAdapter != null) {
+        if (mBaseTagAdapter != null) {
             reloadData()
         }
+    }
+
+
+    /**
+     * 增加子 tag view 点击事件
+     * Add on tag child click listener
+     * @param id
+     * @param listener
+     */
+    fun addOnTagChildClickListener(@IdRes id: Int, listener: OnTagChildClickListener<BaseTagAdapter<*>>) = apply {
+        mOnTagChildClickArray =
+            (mOnTagChildClickArray?: SparseArray<OnTagChildClickListener<BaseTagAdapter<*>>>()).apply {
+                put(id, listener)
+            }
+    }
+
+    /**
+     *
+     * On item child click
+     * @param v
+     * @param position
+     */
+    protected open fun onItemChildClick(v: View, position: Int) {
+        mOnTagChildClickArray?.get(v.id)?.onItemClick(mBaseTagAdapter!!, v, position)
+    }
+
+    /**
+     * On tag child click listener
+     * @param T
+     * @constructor Create empty On tag child click listener
+     */
+
+    fun interface OnTagChildClickListener<T : Any> {
+        fun onItemClick(adapter: T, view: View, position: Int)
     }
 }

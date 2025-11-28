@@ -20,19 +20,20 @@
             android:layout_marginBottom="@dimen/dp_30">
 
             <TextView
-                android:id="@+id/multi_linear_recycler_tag_title"
-                android:layout_marginTop="@dimen/dp_10"
+                android:id="@+id/multiLinearRecyclerTagTitle"
+                android:layout_marginTop="@dimen/dp_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_10"
                 android:textColor="@color/color_333333"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16"
+                android:text="RecyclerView 演示(LinearLayoutManager)"/>
 
             <com.framework.tagflow.MultiTagFlowLayout
                 android:id="@+id/multi_linear_recycler_tag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_15"
                 app:hasMore="true"
                 app:layout_type="RecyclerView"
                 app:layoutManager_Mode="LinearLayoutManager"
@@ -40,39 +41,39 @@
                 app:tagsVerticalSpace="@dimen/dp_5"/>
 
             <TextView
-                android:id="@+id/multi_grid_recycler_tag_title"
-                android:layout_marginTop="@dimen/dp_10"
+                android:id="@+id/multiGridRecyclerTagTitle"
+                android:layout_marginTop="@dimen/dp_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_10"
                 android:textColor="@color/color_333333"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16"
+                android:text="RecyclerView 演示(GridLayoutManager)"/>
 
             <com.framework.tagflow.MultiTagFlowLayout
                 android:id="@+id/multi_grid_recycler_tag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_15"
                 app:hasMore="true"
                 android:layout_marginStart="@dimen/dp_10"
                 android:layout_marginEnd="@dimen/dp_10"
                 app:layout_type="RecyclerView"
-                app:layoutManager_Mode="GridLayoutManager"
-                app:tagsHorizontalSpace="@dimen/dp_5"
-                app:tagsVerticalSpace="@dimen/dp_5"/>
+                app:layoutManager_Mode="GridLayoutManager"/>
 
 
             <TextView
-                android:id="@+id/multi_flow_tag_title"
+                android:id="@+id/multiFlowTagTitle"
                 android:layout_marginTop="@dimen/dp_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_10"
                 android:textColor="@color/color_333333"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16"
+                android:text="FlowLayout演示（自带布局）"/>
 
             <com.framework.tagflow.MultiTagFlowLayout
-                android:id="@+id/multi_flow_tag"
+                android:id="@+id/multiFlowTag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
@@ -87,16 +88,41 @@
 
 
             <TextView
-                android:id="@+id/multi_flow_tag_title_self"
+                android:id="@+id/multiFlowTagTitleSelf"
                 android:layout_marginTop="@dimen/dp_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_10"
                 android:textColor="@color/color_333333"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16"
+                android:text="FlowLayout演示（自定义布局）"/>
 
             <com.framework.tagflow.MultiTagFlowLayout
-                android:id="@+id/multi_flow_tag_self"
+                android:id="@+id/multiFlowTagSelf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_marginEnd="@dimen/dp_10"
+                app:hasMore="true"
+                app:layout_type="FlowLayout"
+                app:tagsHorizontalSpace="@dimen/dp_5"
+                app:tagsVerticalSpace="@dimen/dp_5"/>
+
+
+
+            <TextView
+                android:id="@+id/noDataTitle"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/sp_16"
+                android:text="没有data演示"/>
+
+            <com.framework.tagflow.MultiTagFlowLayout
+                android:id="@+id/multiFlowDataTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"

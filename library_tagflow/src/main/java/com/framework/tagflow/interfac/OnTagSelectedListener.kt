@@ -10,6 +10,6 @@ import com.framework.tagflow.bean.BaseTagBean
  * @说明:标签被选中或取消选中监听
  */
 interface OnTagSelectedListener {
-    fun selected(view: View?, position: Int, selected: List<BaseTagBean?>?)
-    fun unSelected(view: View?, position: Int, selected: List<BaseTagBean?>?)
+    fun selected(view: View?, position: Int, selected: List<Any?>?)
+    fun unSelected(view: View?, position: Int, selected: List<Any?>?)
 }

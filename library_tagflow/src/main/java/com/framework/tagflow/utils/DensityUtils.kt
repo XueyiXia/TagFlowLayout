@@ -19,10 +19,8 @@ class DensityUtils private constructor() {
          * @return result in px
          */
         fun dp2px(context: Context, dpVal: Float): Int {
-            return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dpVal, context.resources.displayMetrics
-            ).toInt()
+            val scale = context.resources.displayMetrics.density
+            return (dpVal * scale+0.5F).toInt()
         }
 
         /**
@@ -59,7 +57,7 @@ class DensityUtils private constructor() {
          * @return result in sp
          */
         fun px2sp(context: Context, pxVal: Float): Float {
-            return pxVal / context.resources.displayMetrics.scaledDensity
+            return pxVal / context.resources.displayMetrics.density
         }
     }
 
