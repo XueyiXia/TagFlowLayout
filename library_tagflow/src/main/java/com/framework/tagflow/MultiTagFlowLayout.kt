@@ -11,34 +11,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.*
 import androidx.annotation.IdRes
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.withStyledAttributes
+import androidx.core.util.isNotEmpty
+import androidx.core.util.size
+import androidx.core.view.isGone
+import androidx.core.view.isNotEmpty
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.*
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.framework.tagflow.adapter.BaseTagAdapter
-import com.framework.tagflow.bean.BaseTagBean
+import com.framework.tagflow.databinding.TagFlowLayoutBinding
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
 import com.framework.tagflow.tags.MutSelectedTagView
 import com.framework.tagflow.tags.NonTouchableRecyclerView
 import com.framework.tagflow.utils.DensityUtils
-import com.framework.tagflow.view.ControlScrollView
 import com.framework.tagflow.view.FlowLayout
 import kotlin.math.ceil
-import androidx.core.view.isNotEmpty
-import androidx.core.content.withStyledAttributes
-import androidx.core.util.isNotEmpty
-import androidx.core.util.size
-import androidx.core.view.isGone
-import com.framework.tagflow.databinding.TagFlowLayoutBinding
-import kotlin.compareTo
-import kotlin.text.clear
-import kotlin.text.toFloat
 
 /**
  * @author: xiaxueyi
@@ -63,19 +59,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         private const val LAYOUT_TYPE_DEFAULT = 0
         private const val LAYOUT_MANAGER_MODE_DEFAULT = 0
         private const val DEFAULT_ROWS = 3
-        private const val DEFAULT_COLUMN = 3
         private const val MAX_FLOW_LAYOUT_LINES = 6
     }
 
-    private lateinit var mControlScrollView: ControlScrollView     //标签容器
-
-    private lateinit var mIvArrowMore: ImageView    //箭头
-
-    private lateinit var mTvMoreHint: TextView    //提示文本
-
-    private lateinit var mRlShowMore: LinearLayout    //展开收起布局
-
-    private lateinit var mEmptyViewContainer:FrameLayout;
 
     //是否折叠起来
     //true:折叠起来了
@@ -244,15 +230,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
-        inflate(context, R.layout.tag_flow_layout, this)
-        mControlScrollView = findViewById(R.id.hsv_tag_content)
-        mIvArrowMore = findViewById(R.id.iv_arrow_more)
-        mTvMoreHint = findViewById(R.id.tv_more_hint)
-        mRlShowMore = findViewById(R.id.rl_show_more)
-        mEmptyViewContainer= findViewById(R.id.fl_empty)
-
-
-        mRlShowMore.setOnClickListener {
+        mBinding.rlShowMore.setOnClickListener {
             //真实数量
             var realCount =0
             var finalLine = 0
@@ -320,7 +298,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         animator.duration = animationDuration.toLong()
         animator.addUpdateListener { animation ->
             val value = animation.animatedValue as Int
-            mControlScrollView.updateLayoutParams {
+            mBinding.hsvTagContent.updateLayoutParams {
                 this.height=value
             }
         }
@@ -374,14 +352,13 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         } else {
             180f
         }
-        ObjectAnimator.ofFloat(mIvArrowMore, "rotation", rotationStart, rotationEnd).start()
+        ObjectAnimator.ofFloat(mBinding.ivArrowMore, "rotation", rotationStart, rotationEnd).start()
         animate(animateStart, animateEnd)
-        mTvMoreHint.text = if (isFolded) {
+        mBinding.tvMoreHint.text = if (isFolded) {
             expandHint
         } else {
             foldHint
         }
-        mControlScrollView.setCanScroll(false)
         isFolded = !isFolded
     }
 
@@ -414,7 +391,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 mRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
                     override fun onGlobalLayout() {
-                        mControlScrollView.updateLayoutParams {
+                        mBinding.hsvTagContent.updateLayoutParams {
                             this.height = calculateControlScrollViewHeight(itemCount) //计算 ControlScrollView 的高度
                         }
                         mRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -434,9 +411,9 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                     override fun onGlobalLayout() {
                         val flowLayoutLines = mFlowLayout.getLineSize()
                         val controlScrollViewHeight = if (mHasMore) { // 有展开更多的布局
-                            if (mRlShowMore.isGone){
-                                mRlShowMore.visibility = VISIBLE
-                                mRlShowMore.isClickable = true
+                            if (mBinding.rlShowMore.isGone){
+                                mBinding.rlShowMore.visibility = VISIBLE
+                                mBinding.rlShowMore.isClickable = true
                             }
                             if (flowLayoutLines <= DEFAULT_ROWS) {
                                 getLineHeight()  * flowLayoutLines
@@ -444,12 +421,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                                 getLineHeight() * DEFAULT_ROWS
                             }
                         } else { // 没有展开更多的布局
-                            mRlShowMore.visibility = View.GONE
-                            mRlShowMore.isClickable = false // 避免点击事件
+                            mBinding.rlShowMore.visibility = View.GONE
+                            mBinding.rlShowMore.isClickable = false // 避免点击事件
                             getLineHeight() * flowLayoutLines
                         }
 
-                        mControlScrollView.updateLayoutParams {
+                        mBinding.hsvTagContent.updateLayoutParams {
                             this.height=controlScrollViewHeight
                         }
                         mFlowLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -515,16 +492,16 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 实例化布局类型
      */
     private fun initLayoutType() {
-        if (mControlScrollView.isNotEmpty()) {
-            mControlScrollView.removeAllViews()
+        if (mBinding.hsvTagContent.isNotEmpty()) {
+            mBinding.hsvTagContent.removeAllViews()
         }
         when (mLayoutType) {
             LayoutTypeMode.RecyclerView.index -> {
-                mControlScrollView.addView(mRecyclerView)
+                mBinding.hsvTagContent.addView(mRecyclerView)
             }
 
             LayoutTypeMode.FlowLayout.index -> {
-                mControlScrollView.addView(mFlowLayout)
+                mBinding.hsvTagContent.addView(mFlowLayout)
             }
         }
     }
@@ -762,17 +739,17 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      *
      */
     private fun updateLayoutForEmptyData() {
-        mControlScrollView.updateLayoutParams {
+        mBinding.hsvTagContent.updateLayoutParams {
             this.height = 0
         }
-        val childCount:Int= mEmptyViewContainer.childCount
+        val childCount:Int= mBinding.flEmpty.childCount
         if(childCount>0){
-            mEmptyViewContainer.removeAllViews()
+            mBinding.flEmpty.removeAllViews()
         }
-        mEmptyViewContainer.addView(mEmptyView)
-        mEmptyViewContainer.visibility= VISIBLE
-        mRlShowMore.visibility = INVISIBLE
-        mRlShowMore.isClickable = false
+        mBinding.flEmpty.addView(mEmptyView)
+        mBinding.flEmpty.visibility= VISIBLE
+        mBinding.rlShowMore.visibility = INVISIBLE
+        mBinding.rlShowMore.isClickable = false
     }
 
 
@@ -798,10 +775,10 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         val controlScrollViewHeight= if (mHasMore) { // 有展开更多的布局
             if (isNotifyData) {
                 if (finalLine <= 3) {
-                    mRlShowMore.visibility = GONE
+                    mBinding.rlShowMore.visibility = GONE
                     getLineHeight() * finalLine
                 } else {
-                    mRlShowMore.visibility = VISIBLE
+                    mBinding.rlShowMore.visibility = VISIBLE
                     if (isFolded) {
                         getLineHeight() * finalLine
                     } else {
@@ -810,15 +787,15 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 }
             } else {
                 if (finalLine <= 3) {
-                    mRlShowMore.visibility = GONE
+                    mBinding.rlShowMore.visibility = GONE
                     getLineHeight() * finalLine
                 } else {
-                    mRlShowMore.visibility = VISIBLE
+                    mBinding.rlShowMore.visibility = VISIBLE
                     getLineHeight() * defaultRows
                 }
             }
         } else { // 没有展开更多的布局
-            mRlShowMore.visibility = GONE
+            mBinding.rlShowMore.visibility = GONE
             getLineHeight() * itemCount // 使用之前获取的 itemCount
         }
 
@@ -859,7 +836,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     fun setFoldHint(foldHint: String) {
         this.foldHint = foldHint
         if (isFolded) {
-            mTvMoreHint.text = foldHint
+            mBinding.tvMoreHint.text = foldHint
         }
     }
 
@@ -880,7 +857,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     fun setExpandHint(expandHint: String) {
         this.expandHint = expandHint
         if (!isFolded) {
-            mTvMoreHint.text = expandHint
+            mBinding.tvMoreHint.text = expandHint
         }
     }
 
@@ -901,25 +878,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         this.animationDuration = animationDuration
     }
 
-    /**
-     *
-     * @return Boolean
-     */
-    fun isCanScroll(): Boolean {
-        return mControlScrollView.isCanScroll()
-    }
-
-    /**
-     * 设置是否退出内部标签容器
-     * @param can Boolean
-     */
-    fun setCanScroll(can: Boolean) {
-        mControlScrollView.setCanScroll(can)
-    }
-
-    fun setForceFixed(fixed: Boolean) {
-        mControlScrollView.setForceFixed(fixed)
-    }
 
     /**
      * 获取FlowLayout 点击模式

@@ -2,30 +2,29 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:parentTag="android.widget.LinearLayout">
 
     <LinearLayout
-        android:id="@+id/ll_tag_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/fl_empty"
+            android:id="@+id/flEmpty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:visibility="gone"/>
 
-        <com.framework.tagflow.view.ControlScrollView
-            android:id="@+id/hsv_tag_content"
+        <FrameLayout
+            android:id="@+id/hsvTagContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
             tools:layout_height="@dimen/dp_105"/>
 
         <LinearLayout
-            android:id="@+id/rl_show_more"
+            android:id="@+id/rlShowMore"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
                 android:background="@drawable/tag_flow_layout_arrow_bg">
 
                 <TextView
-                    android:id="@+id/tv_more_hint"
+                    android:id="@+id/tvMoreHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/foldHint"
@@ -60,7 +59,7 @@
                     android:visibility="visible" />
 
                 <ImageView
-                    android:id="@+id/iv_arrow_more"
+                    android:id="@+id/ivArrowMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
