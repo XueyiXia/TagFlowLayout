@@ -106,7 +106,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     
     private val mRecyclerView: NonTouchableRecyclerView by lazy { NonTouchableRecyclerView(context) }
 
-    private val mBinding = TagFlowLayoutBinding.inflate(LayoutInflater.from(context), this)
+    private val mBinding = TagFlowLayoutBinding.inflate(LayoutInflater.from(context), this,true)
 
     private val mFlowLayout: FlowLayout by lazy {
         FlowLayout(context).apply {
