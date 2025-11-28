@@ -9,7 +9,7 @@
 <img src="https://github.com/XueyiXia/TagFlowLayout/assets/25949241/f9ef28bb-9895-4d2d-b753-a07e7189095b" width="350px">
 
 ## 没有数据展示：
-<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/ebfb091f-93fa-4639-a26b-d21e35c7f3d9" />
+<img width="350" height="2400" alt="image" src="https://github.com/user-attachments/assets/ebfb091f-93fa-4639-a26b-d21e35c7f3d9"  />
 
 
 
