@@ -230,6 +230,12 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
+
+        /**
+         * 更新 tvMoreHint 的文本
+         */
+        updateMoreHintText(isFolded, expandHint, foldHint)
+
         mBinding.rlShowMore.setOnClickListener {
             //真实数量
             var realCount =0
@@ -354,12 +360,25 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
         }
         ObjectAnimator.ofFloat(mBinding.ivArrowMore, "rotation", rotationStart, rotationEnd).start()
         animate(animateStart, animateEnd)
+        isFolded = !isFolded
+        updateMoreHintText(isFolded, expandHint, foldHint)
+    }
+
+
+    /**
+     * 更新 tvMoreHint 的文本
+     * Update more hint text
+     *
+     * @param isFolded
+     * @param expandHint
+     * @param foldHint
+     */
+    private fun updateMoreHintText(isFolded: Boolean, expandHint: String, foldHint: String) {
         mBinding.tvMoreHint.text = if (isFolded) {
             expandHint
         } else {
             foldHint
         }
-        isFolded = !isFolded
     }
 
     /**
