@@ -82,6 +82,13 @@ dependencies {
 
 
 
+		//自定义xml 中子类的点击事件
+       mViewBinding.multiFlowTagSelf.addOnTagChildClickListener(com.tagflow.R.id.flFlagClose){ adapter, view, position ->
+            Toast.makeText(this@MainActivity,"点击了子tag view-->>:$position",Toast.LENGTH_SHORT).show()
+        }
+
+
+
 ## 默认tag样式
 
 1.DefaultTagView (默认实心tag)
