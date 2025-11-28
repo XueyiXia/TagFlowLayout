@@ -25,7 +25,7 @@
 
 dependencies {
 
-		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.5' 
+		implementation 'com.github.XueyiXia:TagFlowLayout:v1.0.6' 
 	}
     
     
@@ -80,12 +80,10 @@ dependencies {
         })
     }
 
-
-
 		//自定义xml 中子类的点击事件
-       mViewBinding.multiFlowTagSelf.addOnTagChildClickListener(com.tagflow.R.id.flFlagClose){ adapter, view, position ->
-            Toast.makeText(this@MainActivity,"点击了子tag view-->>:$position",Toast.LENGTH_SHORT).show()
-        }
+	   mViewBinding.multiFlowTagSelf.addOnTagChildClickListener(com.tagflow.R.id.flFlagClose){ adapter, view, position ->
+			Toast.makeText(this@MainActivity,"点击了子tag view-->>:$position",Toast.LENGTH_SHORT).show()
+		}
 
 
 
