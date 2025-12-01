@@ -21,47 +21,39 @@
 
     <LinearLayout
         android:id="@+id/rlShowMore"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:focusable="auto"
+        android:gravity="center"
+        android:layout_margin="@dimen/dp_10"
+        android:paddingStart="@dimen/dp_5"
+        android:paddingTop="@dimen/dp_5"
+        android:paddingEnd="@dimen/dp_5"
+        android:paddingBottom="@dimen/dp_5"
+        android:background="@drawable/tag_flow_layout_arrow_bg">
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <TextView
+            android:id="@+id/tvMoreHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/foldHint"
+            android:textStyle="bold"
+            android:textColor="#262626"
+            android:textSize="@dimen/sp_14"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginEnd="@dimen/dp_5"
+            android:gravity="center"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ivArrowMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:focusable="auto"
-            android:gravity="center"
-            android:layout_margin="@dimen/dp_10"
-            android:paddingStart="@dimen/dp_5"
-            android:paddingTop="@dimen/dp_5"
-            android:paddingEnd="@dimen/dp_5"
-            android:paddingBottom="@dimen/dp_5"
-            android:background="@drawable/tag_flow_layout_arrow_bg">
-
-            <TextView
-                android:id="@+id/tvMoreHint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/foldHint"
-                android:textStyle="bold"
-                android:textColor="#262626"
-                android:textSize="@dimen/sp_14"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/dp_5"
-                android:layout_marginEnd="@dimen/dp_5"
-                android:gravity="center"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/ivArrowMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/common_icon_down_arrow" />
-
-        </LinearLayout>
+            android:src="@drawable/common_icon_down_arrow" />
 
     </LinearLayout>
 
