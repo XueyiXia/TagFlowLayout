@@ -11,9 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.annotation.IntDef
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
 import androidx.core.util.isNotEmpty
 import androidx.core.util.size
@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.framework.tagflow.adapter.BaseTagAdapter
-import com.framework.tagflow.databinding.TagFlowLayoutBinding
+import com.framework.tagflow.databinding.TagFlowLayoutNewBinding
 import com.framework.tagflow.interfac.OnTagClickListener
 import com.framework.tagflow.interfac.OnTagSelectedListener
 import com.framework.tagflow.tags.MutSelectedTagView
@@ -47,7 +47,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     companion object {
         //默认标签之间的间距
@@ -106,7 +106,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     
     private val mRecyclerView: NonTouchableRecyclerView by lazy { NonTouchableRecyclerView(context) }
 
-    private val mBinding = TagFlowLayoutBinding.inflate(LayoutInflater.from(context), this,true)
+    private val mBinding by lazy { TagFlowLayoutNewBinding.inflate(LayoutInflater.from(context), this) }
 
     private val mFlowLayout: FlowLayout by lazy {
         FlowLayout(context).apply {
@@ -230,7 +230,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
-
+        this.orientation=VERTICAL
         /**
          * 更新 tvMoreHint 的文本
          */
