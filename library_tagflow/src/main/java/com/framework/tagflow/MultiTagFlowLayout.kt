@@ -402,8 +402,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             updateLayoutForEmptyData()
             return
         }
-        
-
 
         when(mLayoutType){
             LayoutTypeMode.RecyclerView.index->{ //RecyclerView
@@ -490,6 +488,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     internal inner class RecyclerViewAdapterDataSetObserver : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
             super.onChanged()
+            Log.w("setAdapter", "执行了RecyclerView监听")
             reloadData()
         }
     }
@@ -504,8 +503,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             reloadData()
         }
     }
-
-
 
     /**
      * 实例化布局类型
@@ -586,30 +583,50 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     fun setAdapter(adapter:Any){
         when (adapter) {
             is RecyclerView.Adapter<*> -> {
-                // 取消注册旧的观察者
-                mRecyclerViewAdapterDataSetObserver?.let { mRecyclerViewAdapter?.unregisterAdapterDataObserver(it) }
-                this.mRecyclerViewAdapter = adapter
-                mRecyclerView.adapter = mRecyclerViewAdapter
-                mRecyclerViewAdapter?.let { recyclerViewAdapter ->
-                    mRecyclerViewAdapterDataSetObserver = RecyclerViewAdapterDataSetObserver()
-                    recyclerViewAdapter.registerAdapterDataObserver(mRecyclerViewAdapterDataSetObserver!!)
-                    reloadData()
-                }
+                setRecyclerViewAdapter(adapter)
             }
             is BaseTagAdapter<*> -> {
-                // 取消注册旧的观察者
-                mAdapterDataSetObserver?.let { mBaseTagAdapter?.unregisterDataSetObserver(it) }
-                this.mBaseTagAdapter = adapter
-                mBaseTagAdapter?.let { tagAdapterIt ->
-                    mAdapterDataSetObserver = AdapterDataSetObserver()
-                    tagAdapterIt.registerDataSetObserver(mAdapterDataSetObserver)
-                    reloadData()
-                }
+                setBaseTagAdapter(adapter)
             }
             else -> {
-                // 处理不支持的 Adapter 类型
-                Log.w("setAdapter", "adapter type: ${adapter.javaClass.name}")
+                Log.w("setAdapter", "不支持的 Adapter 类型 : ${adapter.javaClass.name}")
             }
+        }
+    }
+
+
+    /**
+     * Set recycler view adapter
+     *
+     * @param adapter
+     */
+    private fun setRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
+        // 取消注册旧的观察者
+        mRecyclerViewAdapterDataSetObserver?.let {
+            mRecyclerViewAdapter?.unregisterAdapterDataObserver(it)
+        }
+        this.mRecyclerViewAdapter = adapter
+        mRecyclerView.adapter = mRecyclerViewAdapter
+        mRecyclerViewAdapterDataSetObserver = RecyclerViewAdapterDataSetObserver().also { observer ->
+            adapter.registerAdapterDataObserver(observer)
+            reloadData()
+        }
+    }
+
+    /**
+     * Set base tag adapter
+     *
+     * @param adapter
+     */
+    private fun setBaseTagAdapter(adapter: BaseTagAdapter<*>) {
+        // 取消注册旧的观察者
+        mAdapterDataSetObserver?.let {
+            mBaseTagAdapter?.unregisterDataSetObserver(it)
+        }
+        this.mBaseTagAdapter = adapter
+        mAdapterDataSetObserver = AdapterDataSetObserver().also { observer ->
+            adapter.registerDataSetObserver(observer)
+            reloadData()
         }
     }
 
@@ -1006,7 +1023,7 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * @param position
      */
     protected open fun onItemChildClick(v: View, position: Int) {
-        mOnTagChildClickArray?.get(v.id)?.onItemClick(mBaseTagAdapter!!, v, position)
+        mOnTagChildClickArray?.get(v.id)?.onItemTagChildClick(mBaseTagAdapter!!, v, position)
     }
 
     /**
@@ -1016,6 +1033,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      */
 
     fun interface OnTagChildClickListener<T : Any> {
-        fun onItemClick(adapter: T, view: View, position: Int)
+        fun onItemTagChildClick(adapter: T, view: View, position: Int)
     }
 }

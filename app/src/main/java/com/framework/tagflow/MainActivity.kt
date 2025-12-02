@@ -27,13 +27,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         initLinearAdapter()
 
-        initGridAdapter()
-
-        initTagFlowAdapter()
-
-        initTagFlowAdapterSelf()
-
-        initNoDataTagFlowAdapterSelf()
+//        initGridAdapter()
+//
+//        initTagFlowAdapter()
+//
+//        initTagFlowAdapterSelf()
+//
+//        initNoDataTagFlowAdapterSelf()
     }
 
 
@@ -60,6 +60,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mTestLinearAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
+                mTestLinearAdapter.notifyItemChanged(position)
                 Toast.makeText(this@MainActivity,"onItemClick事件-->>:$position",Toast.LENGTH_SHORT).show()
             }
         })
