@@ -19,21 +19,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private lateinit var mTestLinearAdapter: TestLinearAdapter
 
-
-
     private val mGridSpanCount=3;//九宫格每一行多少个
 
     override fun initView(rootView: View, savedInstanceState: Bundle?) {
 
         initLinearAdapter()
 
-//        initGridAdapter()
-//
-//        initTagFlowAdapter()
-//
-//        initTagFlowAdapterSelf()
-//
-//        initNoDataTagFlowAdapterSelf()
+        initGridAdapter()
+
+        initTagFlowAdapter()
+
+        initTagFlowAdapterSelf()
+
+        initNoDataTagFlowAdapterSelf()
     }
 
 
@@ -42,20 +40,36 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initLinearAdapter(){
         mTestLinearAdapter=TestLinearAdapter()
-        for(index in 0..5){
+        val dataList = mutableListOf<TestBean>()
+        for(index in 0..15){
             val bean= TestBean()
+            when (index) {
+                0 ,6-> {
+                    bean.setTitle("Linear Test")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
 
-            if (index==0){
-                bean.setTitle("Linear Test")
-            }else if (index==2){
-                bean.setTitle("垂直线性布局 Test")
-            }else{
-                bean.setTitle("Test")
+                2 -> {
+                    bean.setTitle("垂直线性布局 Test")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+
+                5 -> {
+                    bean.setTitle("垂直线性布局 Data")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+
+                else -> {
+                    bean.setTitle("测试data")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
             }
-
-            bean.setId(index)
-            mTestLinearAdapter.addData(bean)
         }
+        mTestLinearAdapter.addData(dataList)
         mViewBinding.multiLinearRecyclerTag.setAdapter(mTestLinearAdapter)
         mTestLinearAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 
@@ -71,12 +85,36 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val mGridSpace: Int =resources.getDimension(R.dimen.dp_16).toInt()
         mViewBinding.multiGridRecyclerTag.recyclerView.addItemDecoration(GridLayoutItemDecoration(mGridSpanCount,mGridSpace, false))
         mTestGridAdapter= TestGridAdapter()
-        for(index in 0..10){
+        val dataList = mutableListOf<TestBean>()
+        for(index in 0..13){
             val bean= TestBean()
-            bean.setTitle("九宫格布局测试 Test")
-            bean.setId(index)
-            mTestGridAdapter.addData(bean)
+            when (index) {
+                0 ,6-> {
+                    bean.setTitle("Grid Test")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+
+                2 -> {
+                    bean.setTitle("九宫格布局 Test")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+
+                5 -> {
+                    bean.setTitle("九宫格Data")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+
+                else -> {
+                    bean.setTitle("测试data")
+                    bean.setId(index)
+                    dataList.add(bean)
+                }
+            }
         }
+        mTestGridAdapter.addData(dataList)
         mViewBinding.multiGridRecyclerTag.setAdapter(mTestGridAdapter)
         mTestGridAdapter.setOnItemClickListener(object :com.framework.tagflow.listener.OnItemClickListener{
 

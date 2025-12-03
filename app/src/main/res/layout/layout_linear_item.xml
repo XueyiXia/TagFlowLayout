@@ -20,7 +20,6 @@
         android:layout_marginTop="@dimen/dp_5"
         android:text="Linear Test"
         android:ellipsize="end"
-        android:maxEms="5"
         android:maxLines="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>

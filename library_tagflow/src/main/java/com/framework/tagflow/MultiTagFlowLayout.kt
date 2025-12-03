@@ -14,6 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.annotation.IntDef
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
 import androidx.core.util.isNotEmpty
 import androidx.core.util.size
@@ -47,9 +48,10 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     companion object {
+        private const val TAG="MultiTagFlowLayout"
         //默认标签之间的间距
         private const val DEFAULT_TAGS_SPACE = 8f
         //默认展开动画执行时间(毫秒)
@@ -230,7 +232,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
      * 初始化组件
      */
     private fun initWidget() {
-        this.orientation=VERTICAL
         /**
          * 更新 tvMoreHint 的文本
          */
@@ -323,28 +324,29 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
     private fun toggleExpand(finalLine: Int, realCount: Int) {
         val animateStart: Int
         val animateEnd: Int
+        val getItemHeight=getLineHeight()
         val isRecyclerView = mLayoutType == LayoutTypeMode.RecyclerView.index
         if (!isFolded) { // 展开
             animateStart = if (isRecyclerView) {
-                getLineHeight() * defaultRows
+                getItemHeight * defaultRows
             } else {
-                getLineHeight() * 3
+                getItemHeight * 3
             }
             animateEnd = if (isRecyclerView) {
-                getLineHeight() * finalLine
+                getItemHeight * finalLine
             } else {
-                getLineHeight() * realCount
+                getItemHeight * realCount
             }
         } else { // 收起
             animateStart = if (isRecyclerView) {
-                getLineHeight() * finalLine
+                getItemHeight * finalLine
             } else {
-                getLineHeight() * realCount
+                getItemHeight * realCount
             }
             animateEnd = if (isRecyclerView) {
-                getLineHeight() * defaultRows
+                getItemHeight * defaultRows
             } else {
-                getLineHeight() * 3
+                getItemHeight * 3
             }
         }
 
@@ -427,20 +429,21 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
                     override fun onGlobalLayout() {
                         val flowLayoutLines = mFlowLayout.getLineSize()
+                        val getItemHeight = getLineHeight()
                         val controlScrollViewHeight = if (mHasMore) { // 有展开更多的布局
                             if (mBinding.rlShowMore.isGone){
                                 mBinding.rlShowMore.visibility = VISIBLE
                                 mBinding.rlShowMore.isClickable = true
                             }
                             if (flowLayoutLines <= DEFAULT_ROWS) {
-                                getLineHeight()  * flowLayoutLines
+                                getItemHeight  * flowLayoutLines
                             } else {
-                                getLineHeight() * DEFAULT_ROWS
+                                getItemHeight * DEFAULT_ROWS
                             }
                         } else { // 没有展开更多的布局
                             mBinding.rlShowMore.visibility = View.GONE
                             mBinding.rlShowMore.isClickable = false // 避免点击事件
-                            getLineHeight() * flowLayoutLines
+                            getItemHeight * flowLayoutLines
                         }
 
                         mBinding.hsvTagContent.updateLayoutParams {
@@ -535,7 +538,6 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             LayoutTypeMode.RecyclerView.index -> {
                 val layoutManager = mRecyclerView.layoutManager ?: return 0
                 val childView = mRecyclerView.getChildAt(0) ?: return 0
-
                 // 安全获取分割线高度
                 if (mRecyclerView.itemDecorationCount > 0) {
                     when (layoutManager) {
@@ -558,10 +560,18 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
 
                 //子view 的高度
                 itemHeight= if (childView.height > 0) childView.height else childView.measuredHeight
-                //获取设置子view 内外间距的尺寸
-                spaceHeight=childView.marginTop+childView.marginBottom
+                val lp = childView.layoutParams
                 //计算整个item 的高度
-                itemHeight=(itemHeight+spaceHeight+spacing)
+                itemHeight = when (lp) {
+                    is MarginLayoutParams -> {
+                        //获取设置子view 内外间距的尺寸
+                        val spaceHeight = lp.topMargin + lp.bottomMargin
+                        itemHeight + spaceHeight + spacing
+                    }
+                    else -> {
+                        itemHeight + spacing // 没有 margin
+                    }
+                }
             }
 
             LayoutTypeMode.FlowLayout.index -> {
@@ -589,8 +599,10 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
                 setBaseTagAdapter(adapter)
             }
             else -> {
-                Log.w("setAdapter", "不支持的 Adapter 类型 : ${adapter.javaClass.name}")
+                Log.w(TAG, "不支持的 Adapter 类型 : ${adapter.javaClass.name}")
             }
+        }.also {
+            Log.w(TAG, "adapter type: ${adapter.javaClass.name}")
         }
     }
 
@@ -808,31 +820,32 @@ open class MultiTagFlowLayout @JvmOverloads constructor(
             itemCount.toDouble()
         }
         val finalLine = ceil(maxLine).toInt()
+        val getItemHeight=getLineHeight()
         val controlScrollViewHeight= if (mHasMore) { // 有展开更多的布局
             if (isNotifyData) {
                 if (finalLine <= 3) {
                     mBinding.rlShowMore.visibility = GONE
-                    getLineHeight() * finalLine
+                    getItemHeight * finalLine
                 } else {
                     mBinding.rlShowMore.visibility = VISIBLE
                     if (isFolded) {
-                        getLineHeight() * finalLine
+                        getItemHeight * finalLine
                     } else {
-                        getLineHeight() * defaultRows
+                        getItemHeight * defaultRows
                     }
                 }
             } else {
                 if (finalLine <= 3) {
                     mBinding.rlShowMore.visibility = GONE
-                    getLineHeight() * finalLine
+                    getItemHeight * finalLine
                 } else {
                     mBinding.rlShowMore.visibility = VISIBLE
-                    getLineHeight() * defaultRows
+                    getItemHeight * defaultRows
                 }
             }
         } else { // 没有展开更多的布局
             mBinding.rlShowMore.visibility = GONE
-            getLineHeight() * itemCount // 使用之前获取的 itemCount
+            getItemHeight * itemCount // 使用之前获取的 itemCount
         }
 
         return controlScrollViewHeight
